@@ -1,17 +1,20 @@
-import React, { useState,useContext} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Box, Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Paper } from '@mui/material';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import StatusBadge from './Statuses';
 // Import StatusBadge component if it's a separate file
 import { useNavigate } from 'react-router-dom';
-import {CREATEORUPDATE_PAYMENT_API} from "../../Constants/apiRoutes";
+import { CREATEORUPDATE_PAYMENT_API, GET_PAYMENTSBY_ORDERID_API } from "../../Constants/apiRoutes";
 import { IdContext } from '../../Context/IdContex';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 
 
 const Payment = () => {
-  const { generatedId,customerId,orderDate} = useContext(IdContext);
+  const { generatedId, customerId, orderDate } = useContext(IdContext);
   const [orderDetails, setOrderDetails] = useState({
     PaymentMethod: '',
     PaymentStatus: '',
@@ -28,24 +31,24 @@ const Payment = () => {
   const [popupMessage, setPopupMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const savePayment = () => {
     const paymentData = {
       TenantID: 1,
-      PaymentID:0,
+      PaymentID: 0,
       OrderID: generatedId,
       CustomerID: 33,
       TotalAmount: orderDetails.AdvanceAmount,
       AdvanceAmount: 500,
-      BalenceAmount: 500,
+      BalenceAmount: 500, // Check this typo, it should be "BalanceAmount"
       PaymentComments: orderDetails.PaymentComments,
       PaymentMethod: orderDetails.PaymentMethod,
       PaymentStatus: orderDetails.PaymentStatus,
       MaskedCardNumber: orderDetails.MaskedCardNumber,
     };
-
-    fetch(
-      // 'https://imly-b2y.onrender.com/api/payments/payments/createOrUpdatePayment', 
-      CREATEORUPDATE_PAYMENT_API,{
+  
+    fetch(CREATEORUPDATE_PAYMENT_API, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -54,28 +57,92 @@ const Payment = () => {
     })
       .then(response => response.json())
       .then(data => {
-        if (data.success || data.message === 'Payment created successfully') {
-          setPopupMessage('✔️Payment created successfully');
+        console.log('API Response:', data); // Log the response
+  
+        // Check if the response's StatusCode indicates success
+        if (data.StatusCode === "SUCCESS") {
+          toast.success('Payment created successfully!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+  
+          // Call fetchOrderDetails after a successful payment
+          fetchOrderDetails();  // This will refresh the payment details
+  
         } else {
-          setPopupMessage(data.message || 'Unknown error');
+          // Handle error from the API response
+          toast.error(data.message || 'Error occurred while creating the Payment.', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
         }
-        setShowModal(true);
-        closeModalAndNavigate(); // Close modal and navigate
       })
-      .catch((error) => {
-        setPopupMessage('❌' + error.message);
-        setShowModal(true);
-        closeModalAndNavigate(); // Close modal and navigate
+      .catch(error => {
+        // Handle network or other errors
+        toast.error('❌ ' + error.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
   };
-
-  const closeModalAndNavigate = () => {
-    setTimeout(() => {
-      setShowModal(false);
-      // Automatically navigate to the next step
-      // Replace with the actual path of the next component
-    }, 4000); // Close after 4 seconds
+  
+  // Function to fetch order details
+  const fetchOrderDetails = async () => {
+    try {
+      const response = await fetch(`${GET_PAYMENTSBY_ORDERID_API}/${generatedId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+  
+      const result = await response.json();
+      const payments = result.data; // Assuming 'data' is the array of payment objects
+  
+      // Assuming you want to map the payment data to match your state structure
+      const paymentDetails = payments.map((payment) => ({
+        PaymentMethod: payment.PaymentMethod || "N/A",
+        PaymentStatus: payment.PaymentStatus || "N/A",
+        MaskedCardNumber: payment.MaskedCardNumber || "N/A",
+        PaymentComments: payment.PaymentComments || "N/A",
+        TotalAmount: payment.TotalAmount || "N/A",
+        AdvanceAmount: payment.AdvanceAmount || "N/A",
+        BalanceAmount: payment.BalenceAmount || "N/A", // Fixing typo to 'BalanceAmount'
+        PaymentDate: payment.PaymentDate || "N/A",
+      }));
+  
+      setPaymentDetails(paymentDetails); // Updating state with mapped payment details
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
+  
+  // Initial fetch when component loads
+  useEffect(() => {
+    fetchOrderDetails();
+  }, [generatedId]);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setOrderDetails({ ...orderDetails, [name]: value });
@@ -128,6 +195,49 @@ const Payment = () => {
   };
 
   const [activeStep, setActiveStep] = useState(0);
+  const [paymentDetails, setPaymentDetails] = useState([]);
+
+
+  // useEffect(() => {
+  //   const fetchOrderDetails = async () => {
+  //     try {
+  //       const response = await fetch(`${GET_PAYMENTSBY_ORDERID_API}/${generatedId}`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
+  
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch data');
+  //       }
+  
+  //       const result = await response.json();
+  //       const payments = result.data; // Assuming 'data' is the array of payment objects
+  
+  //       // Assuming you want to map the payment data to match your state structure
+  //       const paymentDetails = payments.map((payment) => ({
+  //         PaymentMethod: payment.PaymentMethod || "N/A",
+  //         PaymentStatus: payment.PaymentStatus || "N/A",
+  //         MaskedCardNumber: payment.MaskedCardNumber || "N/A",
+  //         PaymentComments: payment.PaymentComments || "N/A",
+  //         TotalAmount: payment.TotalAmount || "N/A",
+  //         AdvanceAmount: payment.AdvanceAmount || "N/A",
+  //         BalanceAmount: payment.BalenceAmount || "N/A", // Fixing typo to 'BalanceAmount'
+  //         PaymentDate: payment.PaymentDate || "N/A",
+  //       }));
+  
+  //       setPaymentDetails(paymentDetails); // Updating state with mapped payment details
+  
+  //     } catch (err) {
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  
+  //   fetchOrderDetails();
+  // }, [generatedId]); 
 
   return (
     <Box
@@ -249,25 +359,25 @@ const Payment = () => {
         </div>
         <div className="relative mt-10 flex justify-end gap-4">
           <div className="mt-6 flex justify-end gap-4">
-                    <button
-                      type="submit"
-                      className="button-base save-btn"
-                      onClick={() => {
-                          savePayment();
-                          handleAddOrderes();
-                        }}
-                    >
-                      Save
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCancel}
-                      className="button-base cancel-btn"
-                    >
-                      Cancel
-                    </button>
+            <button
+              type="submit"
+              className="button-base save-btn"
+              onClick={() => {
+                savePayment();
+                handleAddOrderes();
+              }}
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="button-base cancel-btn"
+            >
+              Cancel
+            </button>
 
-                  </div>
+          </div>
           {showModal && (
             <div className="fixed ml-10 inset-0 flex items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-4 rounded shadow-lg">
@@ -278,42 +388,56 @@ const Payment = () => {
         </div>
 
         {orders1.length >= 0 && (
-          <><TableContainer component={Paper} className="mt-4 shadow-md">
-            <Table className="min-w-full border-collapse border border-gray-300">
-              <TableHead className="bg-custom-darkblue text-white">
-                <TableRow>
-                  <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Type</TableCell>
-                  <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Status</TableCell>
-                  <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Card Number</TableCell>
-                  <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Comments</TableCell>
-                  <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Edit</TableCell>
-                  <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Delete</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {orders1.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((order, index) => (
-                  <TableRow key={index} className="text-center border-b border-gray-300 hover:bg-gray-100">
-                    <TableCell align="center" className="border-r">{order.PaymentMethod}</TableCell>
-                    <TableCell align="center" className="border-r border-gray-300">
-                      <StatusBadge status={order.PaymentStatus} />
-                    </TableCell>
-                    <TableCell align="center" className="border-r border-gray-300">{order.MaskedCardNumber}</TableCell>
-                    <TableCell align="center" className="border-r">{order.PaymentComments}</TableCell>
-                    <TableCell align="center" className="border-r border-gray-300">
-                      <IconButton color="primary">
-                        <FaEdit size={20} />
-                      </IconButton>
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconButton onClick={() => handleDelete(order)} color="error">
-                        <FaTrashAlt size={20} />
-                      </IconButton>
-                    </TableCell>
+          <>
+            <TableContainer component={Paper} className="mt-4 shadow-md">
+              <Table className="min-w-full border-collapse border border-gray-300">
+                <TableHead className="bg-custom-darkblue text-white">
+                  <TableRow>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Type</TableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Status</TableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Card Number</TableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Comments</TableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Edit</TableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Delete</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {paymentDetails.map((payment, index) => (
+                    <TableRow key={index} className="text-center border-b border-gray-300 hover:bg-gray-100">
+                      {/* Payment Method */}
+                      <TableCell align="center" className="border-r">{payment.PaymentMethod}</TableCell>
+
+                      {/* Payment Status with Badge */}
+                      <TableCell align="center" className="border-r border-gray-300">
+                        <StatusBadge status={payment.PaymentStatus} />
+                      </TableCell>
+
+                      {/* Masked Card Number */}
+                      <TableCell align="center" className="border-r border-gray-300">{payment.MaskedCardNumber}</TableCell>
+
+                      {/* Payment Comments */}
+                      <TableCell align="center" className="border-r">{payment.PaymentComments}</TableCell>
+
+                      {/* Edit Button */}
+                      <TableCell align="center" className="border-r border-gray-300">
+                        <IconButton onClick={''} color="primary">
+                          <FaEdit size={20} />
+                        </IconButton>
+                      </TableCell>
+
+                      {/* Delete Button */}
+                      <TableCell align="center">
+                        <IconButton onClick={''} color="error">
+                          <FaTrashAlt size={20} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+
+              </Table>
+            </TableContainer>
+
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"

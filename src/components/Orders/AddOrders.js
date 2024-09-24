@@ -12,6 +12,7 @@ import { IoIosCall, IoMdMail } from "react-icons/io";
 import { useNavigate, useLocation } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import StatusBadge from './Statuses';
 import { CREATE_ORDERS, COUNTRIES_API, STATES_API, CITIES_API, SEARCH_CUSTOMERS, GETALLCUSTOMERS_API } from "../../Constants/apiRoutes";
 import {
   MdArrowBackIosNew,
@@ -29,6 +30,7 @@ import { OrderContext } from "../../Context/orderContext";
 import { IdContext } from "../../Context/IdContex";
 import Step3 from './payment';
 import Step2 from './orderStatus';
+import LoadingAnimation from "../../components/Loading/LoadingAnimation";
 const categories = [
   { id: 1, name: "Walk-in", subOptions: ["Newspaper ad"] },
   {
@@ -81,7 +83,7 @@ function AddOrders() {
   const [order, setOrder] = useState(null);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('success');
-  const { generatedId, setGeneratedId,orderDate, setOrderDate} = useContext(IdContext);
+  const { generatedId, setGeneratedId, orderDate, setOrderDate } = useContext(IdContext);
   useEffect(() => {
     if (isDialogOpen) {
       setSelectedCountry(selectedCustomer?.CountryID || "");
@@ -98,13 +100,21 @@ function AddOrders() {
     fetchData(searchValue);
   }, []);
 
-  const fetchData = async (value) => {
+  const fetchData = async (value, isEditMode) => {
     try {
+      // If isEditMode is true, handle it differently if needed
+      if (!isEditMode) {
+        console.log("Edit mode is active, fetching data...");
+        // Perform logic specific to edit mode here
+      } else {
+        console.log("Fetching data in normal mode...");
+      }
+  
       let page = 1;
       let pageSize = 10; // Adjust this according to your backend configuration
       let allResults = [];
       let hasMoreData = true;
-
+  
       while (hasMoreData) {
         const response = await axios.get(
           // "https://imlystudios-backend-mqg4.onrender.com/api/customers/getAllCustomers",
@@ -117,10 +127,10 @@ function AddOrders() {
             },
           }
         );
-
+  
         const customers = response.data.customers;
         allResults = [...allResults, ...customers];
-
+  
         // Determine if there are more pages to fetch
         if (customers.length < pageSize) {
           hasMoreData = false;
@@ -128,6 +138,7 @@ function AddOrders() {
           page++;
         }
       }
+  
 
       // Filter the combined results
       const filteredUsers = allResults.filter((customer) => {
@@ -194,7 +205,7 @@ function AddOrders() {
         AdvanceAmount: prevDetails.AdvanceAmount || selectedCustomer.AdvanceAmount || "",
         BalenceAmount: prevDetails.BalenceAmount || selectedCustomer.BalenceAmount || "",
         ExpectedDurationDays: prevDetails.ExpectedDurationDays || selectedCustomer.ExpectedDurationDays || "",
-        DesginerName: prevDetails.DesginerName || selectedCustomer.DesignerName || "",
+        DesginerName: prevDetails.DesginerName || selectedCustomer.DesginerName || "",
         UploadImages: prevDetails.UploadImages || selectedCustomer.UploadImages || "",
         choosefiles: prevDetails.choosefiles || selectedCustomer.ChooseFiles || "",
         StoreID: selectedCustomer.StoreID || prevDetails.StoreID || '',
@@ -252,8 +263,8 @@ function AddOrders() {
                   setSelectedCity(city);
                   setOrderDetails(prevDetails => ({
                     ...prevDetails,
-                    CityID: CityID,
-                    CityName: city.CityName,
+                    CityID: CityID || "",
+                    CityName: city.CityName || "",
                   }));
                 }
               }
@@ -351,7 +362,7 @@ function AddOrders() {
   const [orderDetails, setOrderDetails] = useState({
     TenantID: 1,
     CustomerID: selectedCustomer.CustomerID,
-    OrderDate: currentDate,
+    OrderDate: "",
     TotalQuantity: 0,
     Address: {
       AddressLine1: "",
@@ -363,7 +374,7 @@ function AddOrders() {
     },
     AddressID: selectedAddress.AddressID,
     TotalAmount: "",
-    OrderStatus: "Pending",
+    OrderStatus: "",
     TotalQuantity: 0,
     OrderBy: "",
     Type: "",
@@ -377,7 +388,7 @@ function AddOrders() {
     MaskedCardNumber: "",
     DeliveryDate: "",
     Comments: "",
-    ReferedBy: "walk-in",
+    ReferedBy: "",
     PaymentComments: "",
     assginto: "",
     AdvanceAmount: "",
@@ -413,7 +424,7 @@ function AddOrders() {
   const [submittedDetails, setSubmittedDetails] = useState(null);
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const isStepOptional = (step) => step === 1;
   const isStepSkipped = (step) => skipped.has(step);
 
@@ -542,6 +553,7 @@ function AddOrders() {
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     // Check if the order already exists (for update) or if it's a new order (for creation)
     const isUpdate = orderDetails.OrderID ? true : false; // Check if OrderID exists for an update
@@ -584,11 +596,9 @@ function AddOrders() {
       );
 
       const generatedId = response.data.OrderID;
-      const orderDate=orderDetails.OrderDate;// Assuming response contains OrderID
+      const orderDate = orderDetails.OrderDate;// Assuming response contains OrderID
       setGeneratedId(generatedId);
       setOrderDate(orderDate);
-      console.log(isUpdate ? "Order updated successfully:" : "Order created successfully:",orderDetails.OrderDate);
-
       // Show different messages for creation and update
       if (isUpdate) {
         toast.success("Order updated successfully!", {
@@ -617,11 +627,13 @@ function AddOrders() {
         setTimeout(() => {
           console.log("Timeout executed after order creation or update");
           handleNext();
-        }, 5000); // 3 seconds delay
+        }, 5000);
+        // 3 seconds delay
       }
     } catch (error) {
       // Error handling
       console.error(isUpdate ? "Error updating order:" : "Error creating order:", error);
+
 
       // Show error toast
       toast.error(isUpdate ? "Order update failed!" : "Order creation failed!", {
@@ -633,13 +645,14 @@ function AddOrders() {
         draggable: true,
         progress: undefined,
       });
+
     }
 
     // Reset form fields after submission
     setOrderDetails({
       TenantID: 1,
       CustomerID: selectedCustomer?.CustomerID || "",
-      OrderDate: currentDate,
+      OrderDate: "",
       TotalQuantity: 0,
       AddressID: selectedAddress?.AddressID || "",
       AddressLine1: "",
@@ -649,7 +662,7 @@ function AddOrders() {
       CountryID: "",
       ZipCode: "",
       TotalAmount: "",
-      OrderStatus: "Pending",
+      OrderStatus: "",
       customerFirstName: "",
       customerLastName: "",
       customerEmail: "",
@@ -659,7 +672,7 @@ function AddOrders() {
       MaskedCardNumber: "",
       DeliveryDate: "",
       Comments: "",
-      ReferedBy:"",
+      ReferedBy: "",
       PaymentComments: "",
       assginto: "",
       AdvanceAmount: "",
@@ -671,12 +684,15 @@ function AddOrders() {
       StoreID: selectedCustomer?.StateID || "",
     });
 
+
     // Reset images and form state
     setImages([]);
     setImagePreviews([]);
     setSelectedSubOption("");
     setActiveStep(0);
     setShowAlert(true);
+    setIsLoading(false);
+
   };
 
 
@@ -684,7 +700,7 @@ function AddOrders() {
     setOrderDetails({
       TenantID: 1,
       CustomerID: selectedCustomer.CustomerID,
-      OrderDate: currentDate,
+      OrderDate: "",
       TotalQuantity: 0,
       AddressID: selectedAddress.AddressID,
       // Address: {
@@ -1004,7 +1020,7 @@ function AddOrders() {
         DeliveryDate: order.DeliveryDate || "",
         Type: order.Type || "",
         Comments: order.Comments || "",
-        DesignerName: order.DesginerName || "",
+        DesginerName: order.DesginerName || "",
         ReferedBy: order.ReferedBy || "",
         assginto: order.assginto || "",
         UploadImages: order.UploadImages || [],
@@ -1078,8 +1094,6 @@ function AddOrders() {
       }
     }
   }, [isEditMode, orderIdDetails, countries, STATES_API, CITIES_API]);
-
-
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -1270,74 +1284,82 @@ function AddOrders() {
                   <>
                     <div className="grid ">
                       <div className="flex justify-left items-center h-full">
-                        
-                      <div className="relative flex flex-col w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg pb-2 mx-auto">
-  {/* Render search input only if isEditMode is false */}
-  {!isEditMode && (
-    <>
-      <input
-        id="searchName"
-        type="text"
-        placeholder="Search by Name..."
-        value={searchValue}
-        onChange={handleSearchInput}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => {
-          if (!isHovered) {
-            setIsFocused(false); // Close dropdown if not hovered
-          }
-        }}
-        className="mt-1 p-2 pr-10 border border-gray-300 rounded-md text-sm md:text-base"
-      />
-      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-        <IoIosSearch aria-label="Search Icon" />
-      </div>
 
-      {/* Only show the dropdown when searchValue is not empty and input is focused */}
-      <div
-        className={`absolute top-full mt-1 border-solid border-2 rounded-lg p-2 w-full bg-white z-10 ${searchValue && isFocused ? "block" : "hidden"}`}
-        style={{
-          maxHeight: '200px',
-          minHeight: '100px',
-          overflowY: 'auto',
-        }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {results.length > 0 ? (
-          <>
-            <div className="mb-2 text-sm text-gray-600">
-              {results.length} Result{results.length > 1 ? "s" : ""}
-            </div>
+                        <div className="relative flex flex-col w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg pb-2 mx-auto">
+                        <div className="flex flex-col justify-end items-center">
+                          {isEditMode && (
+                            <>
+                              <span className="font-bold mr-5">Order Status:</span>
+                              <StatusBadge status={orderDetails.OrderStatus} />
+                            </>
+                          )}
+                        </div>
+                          {/* Render search input only if isEditMode is false */}
+                          {!isEditMode && (
+                            <>
+                              <input
+                                id="searchName"
+                                type="text"
+                                placeholder="Search by Name..."
+                                value={searchValue}
+                                onChange={handleSearchInput}
+                                onFocus={() => setIsFocused(true)}
+                                onBlur={() => {
+                                  if (!isHovered) {
+                                    setIsFocused(false); // Close dropdown if not hovered
+                                  }
+                                }}
+                                className="mt-1 p-2 pr-10 border border-gray-300 rounded-md text-sm md:text-base"
+                              />
+                              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <IoIosSearch aria-label="Search Icon" />
+                              </div>
 
-            {/* Map over filtered results */}
-            {[...new Map(results.map((result) => [result.CustomerID, result])).values()].map((result) => (
-              <div
-                className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
-                key={result.CustomerID}
-                onClick={() => handleCustomerSelect(result)}
-              >
-                <span className="font-medium">
-                  {result.FirstName} {result.LastName}
-                </span>
-                <div className="flex items-center text-xs md:text-sm text-gray-500">
-                  <IoIosCall className="w-4 h-4 mr-1" aria-label="Phone Icon" />
-                  <span>{result.PhoneNumber}</span>
-                </div>
-                <div className="flex items-center text-xs md:text-sm text-gray-500">
-                  <IoMdMail className="w-4 h-4 mr-1" aria-label="Email Icon" />
-                  <span>{result.Email}{result.AddressID}</span>
-                </div>
-              </div>
-            ))}
-          </>
-        ) : (
-          <div className="p-2 text-gray-500">No results found.</div>
-        )}
-      </div>
-    </>
-  )}
-</div>
+                              {/* Only show the dropdown when searchValue is not empty and input is focused */}
+                              <div
+                                className={`absolute top-full mt-1 border-solid border-2 rounded-lg p-2 w-full bg-white z-10 ${searchValue && isFocused ? "block" : "hidden"}`}
+                                style={{
+                                  maxHeight: '200px',
+                                  minHeight: '100px',
+                                  overflowY: 'auto',
+                                }}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                              >
+                                {results.length > 0 ? (
+                                  <>
+                                    <div className="mb-2 text-sm text-gray-600">
+                                      {results.length} Result{results.length > 1 ? "s" : ""}
+                                    </div>
+
+                                    {/* Map over filtered results */}
+                                    {[...new Map(results.map((result) => [result.CustomerID, result])).values()].map((result) => (
+                                      <div
+                                        className="relative cursor-pointer flex flex-col p-2 hover:bg-gray-100 group"
+                                        key={result.CustomerID}
+                                        onClick={() => handleCustomerSelect(result)}
+                                      >
+                                        <span className="font-medium">
+                                          {result.FirstName} {result.LastName}
+                                        </span>
+                                        <div className="flex items-center text-xs md:text-sm text-gray-500">
+                                          <IoIosCall className="w-4 h-4 mr-1" aria-label="Phone Icon" />
+                                          <span>{result.PhoneNumber}</span>
+                                        </div>
+                                        <div className="flex items-center text-xs md:text-sm text-gray-500">
+                                          <IoMdMail className="w-4 h-4 mr-1" aria-label="Email Icon" />
+                                          <span>{result.Email}{result.AddressID}</span>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </>
+                                ) : (
+                                  <div className="p-2 text-gray-500">No results found.</div>
+                                )}
+                              </div>
+                            </>
+                          )}
+                        </div>
 
 
 
@@ -1535,7 +1557,7 @@ function AddOrders() {
                         <input
                           type="date"
                           name="OrderDate"
-                          value={orderDetails.OrderDate ?new Date(orderDetails.OrderDate).toISOString().split('T')[0] : ""}
+                          value={orderDetails.OrderDate ? new Date(orderDetails.OrderDate).toISOString().split('T')[0] : ""}
                           onChange={handleChange}
                           className={`p-1 mt-2 mb-1 w-full border rounded-md ${errors.OrderDate
                             ? "border-red-500"
@@ -1595,7 +1617,7 @@ function AddOrders() {
                         </label>
                         <Combobox
                           as="div"
-                          value={selectedReferralType}
+                          value={orderDetails.ReferedBy}
                           onChange={handleReferralTypeChange}
                         >
                           <div className="relative">
@@ -1757,6 +1779,7 @@ function AddOrders() {
                     </div>
                     <div className="grid">
                       <div>
+
                         <label className="block text-xs font-medium text-gray-700">
                           Address line1
                         </label>
@@ -1796,9 +1819,6 @@ function AddOrders() {
                           </p>
                         )}
                       </div>
-
-
-
                       <div className="mt-0">
                         <label className="block text-xs font-medium text-gray-700">Country</label>
                         <div className="relative mt-2">
@@ -2019,48 +2039,37 @@ function AddOrders() {
                   </>
                 )}
               </Box>
-              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                <button
-                  color="inherit"
-                  onClick={handleBack}
-                  className={`inline-flex items-center gap-x-1.5 rounded-md bg-custom-darkblue px-3 py-2 text-sm font-semibold text-white shadow-sm ${activeStep === 0
-                    ? "cursor-not-allowed opacity-50"
-                    : "hover:bg-custom-lightblue  hover:text-gray-700"
-                    }`}
-                  disabled={activeStep === 0}
-                >
-                  <MdArrowBackIosNew />
-                  Back
-                </button>
-                <Box sx={{ flex: "1 1 auto" }} />
-                <button
-                  variant="contained"
-                  onClick={handleCancel}
-                  className="inline-flex items-center gap-x-1.5 rounded-md bg-gray-300  px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover: hover:bg-gray-400 ml-2 mr-4"
-                >
-                  <RxCross1 />
-                  Cancel
-                </button>{" "}
-                <button
-                  variant="contained"
-                  onClick={
-                    activeStep === steps.length - 3 ? handleSubmit : handleNext
-                  }
-                  className="inline-flex items-center gap-x-1.5 rounded-md bg-custom-darkblue px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightblue hover:text-gray-700 "
-                >
-                  {activeStep === steps.length - 3 ? "Submit" : "Next"}
-                  <MdOutlineArrowForwardIos />
-                </button>
-              </Box>
+
+              <div className="mt-6 flex right-0 justify-end gap-4">
+                {activeStep === 0 && (
+                  <>
+                    <button
+                      type="submit"
+                      onClick={handleSubmit}
+                      className="inline-flex justify-center rounded-md border border-transparent bg-custom-darkblue py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-custom-lightblue focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCancel}
+                      className="inline-flex justify-center rounded-md border border-transparent bg-red-500 py-2 px-4 text-sm font-medium text-white hover:text-black shadow-sm hover:bg-red-200"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                )}
+                {isLoading && (
+                  <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-700">
+                    <LoadingAnimation />
+                  </div>
+                )}
+              </div>
+
             </React.Fragment>
           )}
-          {/* {showAlert && (
-            <div className="fixed top-0 right-0 w-full bg-green-500 text-white p-4 text-center">
-              <span>Order added successfully!</span>
-            </div>
-          )} */}
           {submittedDetails && (
-            <div className="mt-4 bg-gray-100 p-4 rounded shadow-lg">
+            <div className="mt-4 bg-gray-100 p-4  rounded shadow-lg">
               <h3 className="text-xl font-bold mb-4">
                 Submitted Order Details:
               </h3>

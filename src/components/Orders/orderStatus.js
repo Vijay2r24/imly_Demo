@@ -1,4 +1,4 @@
-import React, { useState,useContext,useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, IconButton } from '@mui/material';
 import { FaUpload, FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { IoMdAddCircleOutline } from 'react-icons/io';
@@ -7,10 +7,12 @@ import { FiDownload } from 'react-icons/fi';
 import StatusBadge from './Statuses'; // Make sure you have this component
 import Step2 from './payment';
 import { useNavigate } from 'react-router-dom';
-import {CREATEORUPDATE_ORDER_HISTORY__API} from "../../Constants/apiRoutes";
+import { CREATEORUPDATE_ORDER_HISTORY__API } from "../../Constants/apiRoutes";
 import LoadingAnimation from '../../components/Loading/LoadingAnimation';
 import { IdContext } from '../../Context/IdContex';
 import { GETORDERBYID_API } from "../../Constants/apiRoutes";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 
@@ -21,6 +23,7 @@ const YourComponent = ({ onBack, onNext }) => {
     assginto: '',
     ExpectedDurationDays: '',
     DeliveryDate: '',
+    StatusID: '',
     // Add other fields as needed
   });
   const [images, setImages] = useState([]);
@@ -37,47 +40,138 @@ const YourComponent = ({ onBack, onNext }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const [orderStatusList, setOrderStatusList] = useState([]);
   { activeStep === 2 && <Step2 /> }
-  const { generatedId,customerId,orderDate} = useContext(IdContext);
-  const saveOrderHistory = () => {
-    const orderHistoryData = {
-      TenantID: 1,
-      OrderHistoryID:0,
-      OrderID: generatedId,
-      StatusID: 1,
-      StartDate: orderDate,
-      EndDate: orderDetails.DeliveryDate,
-      AssignTo: "2",
-      Comments: "Not Important",
-      UserID: 2,
-      OrderStatus: orderDetails.OrderStatus,
-      CreatedBy: "sandy",
+  const { generatedId, customerId, orderDate } = useContext(IdContext);
+  useEffect(() => {
+    const fetchOrderStatuses = async () => {
+      try {
+        const response = await fetch('https://imly-b2y.onrender.com/api/Orderstatus/getAllOrderStatus');
+        const data = await response.json();
+
+        // Log the data to see its structure
+        console.log('Fetched Order Statuses:', data);
+
+        // Check if data is in the expected format
+        if (Array.isArray(data.data)) {
+          setOrderStatusList(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching order statuses:', error);
+      }
     };
+
+    fetchOrderStatuses();
+  }, []);
+  const handleChanging = (e) => {
+    const { value } = e.target;
+
+    const selectedStatus = orderStatusList.find(status => status.StatusID === parseInt(value));
+
+    // Update orderDetails with selected OrderStatus and StatusID
+    setOrderDetails({
+      OrderStatus: selectedStatus ? selectedStatus.OrderStatus : '',
+      StatusID: value, // Store StatusID directly from selection
+    });
+  };
+
+  const saveOrderHistory = () => {
+    // Create a FormData object
+    const formData = new FormData();
+  
+    // Append fields to FormData
+    formData.append('TenantID', 1);
+    formData.append('OrderHistoryID', 0); // This might be 0 for creation; otherwise, set it for updates
+    formData.append('OrderID', generatedId||"");
+    formData.append('StatusID', orderDetails.StatusID||"");
+    formData.append('OrderHistoryStatus', orderDetails.OrderStatus||"");
+    formData.append('StartDate', orderDate||"");
+    formData.append('EndDate', orderDetails.DeliveryDate||"");
+    formData.append('AssignTo', "2");
+    formData.append('Comments',orderDetails.assginto||"");
+    formData.append('UserID', 2);
+    formData.append('CreatedBy', "sandy");
+    formData.append('DocumentName', orderDetails.documentUrl||"");
+  
     fetch(CREATEORUPDATE_ORDER_HISTORY__API, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(orderHistoryData),
+      body: formData, // Set the body to the FormData object
     })
       .then(response => response.json())
       .then(data => {
-        if (data.success || data.message === 'Status created successfully') {
-          setPopupMessage('✔️' +'Status created successfully');
-          setShowModal(true);
+        console.log('API Response:', data); // Log the response
+  
+        // Check if the response's StatusCode indicates success
+        if (data.StatusCode === "SUCCESS") {
+          toast.success('Status created successfully!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+  
+          // Call fetchOrderDetails to reload the updated data
+          fetchOrderDetails();
+  
           closeModalAndMoveToNextStep(); // Close modal and move to next step
         } else {
-          setPopupMessage((data.message || 'Unknown error'));
-          setShowModal(true);
+          // Handle error from the API response
+          toast.error(data.message || 'Error occurred while creating the status.', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
           closeModalAfterDelay(); // Close modal after a delay for errors
         }
       })
-      .catch((error) => {
-        setPopupMessage('❌' + error.message);
-        setShowModal(true);
+      .catch(error => {
+        // Handle network or other errors
+        toast.error('❌ ' + error.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         closeModalAfterDelay(); // Close modal after a delay for errors
       });
-  }
+  };
+  
+  // Move fetchOrderDetails outside useEffect so it can be reused
+  const fetchOrderDetails = async () => {
+    try {
+      const response = await fetch(`${GETORDERBYID_API}/${generatedId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+  
+      const data = await response.json();
+      setOrderDetails(data.order);  // Set the order object from response
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchOrderDetails();
+  }, [generatedId]);
   
   const closeModalAndMoveToNextStep = () => {
     setTimeout(() => {
@@ -89,34 +183,10 @@ const YourComponent = ({ onBack, onNext }) => {
   const closeModalAfterDelay = () => {
     setTimeout(() => {
       setShowModal(false); // Close modal after a delay
-    }, 4000); // Close after 4 seconds
+    }, 6000); // Close after 4 seconds
   };
-  useEffect(() => {
-    const fetchOrderDetails = async () => {
-      try {
-        const response = await fetch(`${GETORDERBYID_API}/${generatedId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+  
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-
-        const data = await response.json();
-        setOrderDetails(data); // Set data to state
-        console.log(setOrderDetails)
-      } catch (err) {
-        setError(err.message); // Handle error
-      } finally {
-        setLoading(false); // Stop loading spinner
-      }
-    };
-
-    fetchOrderDetails(); // Trigger API call when the component mounts
-  }, []); // Empty dependency array means this effect runs once on component mount
   const handleChange = (e) => {
     const { name, value } = e.target;
     setOrderDetails((prev) => ({ ...prev, [name]: value }));
@@ -258,32 +328,32 @@ const YourComponent = ({ onBack, onNext }) => {
             <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
               Order Status:
             </label>
+
             <select
               name="OrderStatus"
-              value={orderDetails.OrderStatus}
-              onChange={handleChange}
+              value={orderDetails.StatusID}
+              onChange={handleChanging}
               className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.OrderStatus ? "border-red-500" : "border-gray-300"}`}
             >
               <option value="">Select a Status</option>
-              <option value="Quick Qoute">Quick Qoute</option>
-              <option value="Initial Design">Initial Design</option>
-              <option value="Initial Measurements">Initial Measurements</option>
-              <option value="Revised Design(R1,R2,R#)">Revised Design(R1,R2,R#)</option>
-              <option value="Final Measurement">Final Measurement</option>
-              <option value="Signup Document">Signup Document</option>
-              <option value="Production">Production</option>
-              <option value="PDI">PDI</option>
-              <option value="Dispatch">Dispatch</option>
-              <option value="Installation">Installation</option>
-              <option value="Completion">Completion</option>
-              <option value="Canceled">Canceled</option>
+              {orderStatusList.length > 0 ? (
+                orderStatusList.map((status) => (
+                  <option key={status.StatusID} value={status.StatusID}>
+                    {status.OrderStatus}
+                  </option>
+                ))
+              ) : (
+                <option value="">Loading statuses...</option>
+              )}
             </select>
+
             {errors.OrderStatus && (
               <p className="text-red-500 text-sm ml-2">
                 {errors.OrderStatus}
               </p>
             )}
           </div>
+
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
             <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
@@ -345,6 +415,7 @@ const YourComponent = ({ onBack, onNext }) => {
             </label>
             <input
               type="file"
+              value={orderDetails.Upl}
               multiple
               accept="image/*,application/pdf,.doc,.docx"
               onChange={handleImageChange}
@@ -401,26 +472,26 @@ const YourComponent = ({ onBack, onNext }) => {
         </div>
 
         <div className="relative mt-10 flex justify-end gap-4">
-        <div className="mt-6 flex justify-end gap-4">
-                    <button
-                      type="submit"
-                      className="button-base save-btn"
-                      onClick={() => {
-                        saveOrderHistory();
-                        handleAddOrder();
-                      }}
-                    >
-                      Save
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCancel}
-                      className="button-base cancel-btn"
-                    >
-                    Cancel
-                    </button>
+          <div className="mt-6 flex justify-end gap-4">
+            <button
+              type="submit"
+              className="button-base save-btn"
+              onClick={() => {
+                saveOrderHistory();
+                handleAddOrder();
+              }}
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="button-base cancel-btn"
+            >
+              Cancel
+            </button>
 
-                  </div>
+          </div>
           {showModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
               <div className="bg-white rounded-lg p-6 text-center shadow-lg w-11/12 max-w-sm">
@@ -437,67 +508,84 @@ const YourComponent = ({ onBack, onNext }) => {
             <TableContainer component={Paper} className="mt-4 shadow-md">
               <Table aria-label="orders table" className="min-w-full border-collapse border border-gray-300">
                 <TableHead className="bg-custom-darkblue">
-
                   <TableRow>
                     <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>
                       Order Status
                     </TableCell>
                     <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>
-                      Comments
+                      Delivery Date
                     </TableCell>
                     <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>
-                      Delivery Date
+                      Comments
                     </TableCell>
                     <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>
                       Document
                     </TableCell>
-                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>
-                      Edit
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb',color: 'white', fontWeight: 'bold' }}>
+                     Edit
                     </TableCell>
                     <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>
-                      Delete
+                     Delete
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((order, index) => (
-                    <TableRow key={index} className="hover:bg-gray-100">
+                  {!loading && orderDetails ? (
+                    <TableRow className="hover:bg-gray-100">
+                      {/* Order Number */}
                       <TableCell align="center" className="border-r border-gray-300">
-                        <StatusBadge status={order.OrderStatus} />
-                      </TableCell>
-                      <TableCell align="center" className="border-r border-gray-300">
-                        {order.assginto}
-                      </TableCell>
-                      <TableCell align="center" className="border-r border-gray-300">
-                        {order.DeliveryDate}
-                      </TableCell>
-                      <TableCell align="center" className="border-r border-gray-300">
-                        <IconButton href={order.documentUrl} target="_blank" rel="noopener noreferrer" color="primary">
-                          <AiOutlineEye size={20} />
-                          <span className="ml-2 font-bold text-sm">View</span>
-                        </IconButton>
-                        <IconButton href={order.documentUrl} download color="success">
-                          <FiDownload size={20} />
-                          <span className="font-bold text-sm">Download</span>
-                        </IconButton>
+                        <StatusBadge status={orderDetails.OrderStatus} />
                       </TableCell>
 
+                      {/* Delivery Date */}
+                      <TableCell align="center" className="border-r border-gray-300">
+                        {orderDetails.DeliveryDate ? new Date(orderDetails.DeliveryDate).toLocaleDateString() : "N/A"}
+                      </TableCell>
 
+                      {/* Comments */}
+                      <TableCell align="center" className="border-r border-gray-300">
+                        {orderDetails.Comments || "N/A"}
+                      </TableCell>
+
+                      {/* Document Links */}
+                      <TableCell align="center" className="border-r border-gray-300">
+                        {orderDetails.documentUrl ? (
+                          <>
+                            <IconButton href={orderDetails.documentUrl} target="_blank" rel="noopener noreferrer" color="primary">
+                              <AiOutlineEye size={20} />
+                              <span className="ml-2 font-bold text-sm">View</span>
+                            </IconButton>
+                            <IconButton href={orderDetails.documentUrl} download color="success">
+                              <FiDownload size={20} />
+                              <span className="font-bold text-sm">Download</span>
+                            </IconButton>
+                          </>
+                        ) : "No Documents"}
+                      </TableCell>
+
+                      {/* Actions (Edit/Delete) */}
                       <TableCell align="center" className="border-r border-gray-300">
                         <IconButton color="primary">
                           <FaEdit size={20} />
                         </IconButton>
-                      </TableCell>
-                      <TableCell align="center">
-                        <IconButton onClick={() => handleDelete(order)} color="error">
+                        </TableCell>
+                        <TableCell align="center" className="border-r border-gray-300">
+                        <IconButton onClick={() => handleDelete(orderDetails)} color="error">
                           <FaTrashAlt size={20} />
                         </IconButton>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    <TableRow>
+                      <TableCell align="center" colSpan={6}>
+                        {loading ? "Loading..." : error ? error : "No Order Found"}
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
+
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
