@@ -84,6 +84,7 @@ function AddOrders() {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('success');
   const { generatedId, setGeneratedId, orderDate, setOrderDate } = useContext(IdContext);
+  const { orderIdDetails, setOrderIdDetails, getOrderById } = useContext(OrderContext);
   useEffect(() => {
     if (isDialogOpen) {
       setSelectedCountry(selectedCustomer?.CountryID || "");
@@ -99,16 +100,19 @@ function AddOrders() {
   useEffect(() => {
     fetchData(searchValue);
   }, []);
+  const isEditMode = Boolean(
+    location.state?.orderIdDetails?.order || orderIdDetails?.order
 
-  const fetchData = async (value, isEditMode) => {
+  );
+  const fetchData = async (value) => {
     try {
-      // If isEditMode is true, handle it differently if needed
-      if (!isEditMode) {
-        console.log("Edit mode is active, fetching data...");
-        // Perform logic specific to edit mode here
-      } else {
-        console.log("Fetching data in normal mode...");
+      // If isEditMode is true, return early and do not proceed with the data fetching
+      if (isEditMode) {
+        console.log("Edit mode is active, skipping data fetch.");
+        return; // Exit the function if in edit mode
       }
+  
+      console.log("Fetching data in normal mode...");
   
       let page = 1;
       let pageSize = 10; // Adjust this according to your backend configuration
@@ -117,7 +121,6 @@ function AddOrders() {
   
       while (hasMoreData) {
         const response = await axios.get(
-          // "https://imlystudios-backend-mqg4.onrender.com/api/customers/getAllCustomers",
           GETALLCUSTOMERS_API,
           {
             params: {
@@ -139,7 +142,6 @@ function AddOrders() {
         }
       }
   
-
       // Filter the combined results
       const filteredUsers = allResults.filter((customer) => {
         return (
@@ -157,12 +159,13 @@ function AddOrders() {
           (customer.Zipcode && customer.Zipcode.toLowerCase().includes(value.toLowerCase()))
         );
       });
-
+  
       setResults(filteredUsers);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
+  
   const handleAutoFill = async () => {
     if (!selectedCustomer) {
       console.error("No customer selected.");
@@ -324,7 +327,7 @@ function AddOrders() {
     };
   }, []);
 
-  const { orderIdDetails, setOrderIdDetails, getOrderById } = useContext(OrderContext);
+
   const [searchValue, setSearchValue] = useState("");
 
   const handleChangePage = (event, newPage) => {
@@ -523,10 +526,7 @@ function AddOrders() {
       return updatedDetails;
     });
   };
-  const isEditMode = Boolean(
-    location.state?.orderIdDetails?.order || orderIdDetails?.order
 
-  );
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
