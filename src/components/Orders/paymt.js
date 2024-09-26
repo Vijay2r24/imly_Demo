@@ -1,4 +1,3 @@
-
 import React, { useState, useContext, useEffect } from 'react';
 import { Box, Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Paper } from '@mui/material';
 import { IoMdAddCircleOutline } from 'react-icons/io';
@@ -14,11 +13,7 @@ import { Combobox } from '@headlessui/react';
 import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import { MdOutlineCancel } from "react-icons/md";
 import { AiOutlineEdit } from "react-icons/ai";
-import {
-  StyledTableCell,
-  StyledTableRow,
-  TablePaginationActions,
-} from "../CustomTablePagination";
+
 
 
 
@@ -432,33 +427,33 @@ const Payment = () => {
               <Table className="min-w-full border-collapse border border-gray-300">
                 <TableHead className="bg-custom-darkblue text-white">
                   <TableRow>
-                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Type</StyledTableCell>
-                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Status</StyledTableCell>
-                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Card Number</StyledTableCell>
-                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Comments</StyledTableCell>
-                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Edit</StyledTableCell>
-                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Delete</StyledTableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Type</TableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Status</TableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Card Number</TableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Comments</TableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Edit</TableCell>
+                    <TableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Delete</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {paymentDetails.map((payment, index) => (
                     <TableRow key={index} className="text-center border-b border-gray-300 hover:bg-gray-100">
                       {/* Payment Method */}
-                      <StyledTableCell align="center" className="border-r">{payment.PaymentMethod}</StyledTableCell>
+                      <TableCell align="center" className="border-r">{payment.PaymentMethod}</TableCell>
 
                       {/* Payment Status with Badge */}
-                      <StyledTableCell align="center" className="border-r border-gray-300">
+                      <TableCell align="center" className="border-r border-gray-300">
                         <StatusBadge status={payment.PaymentStatus} />
-                      </StyledTableCell>
+                      </TableCell>
 
                       {/* Masked Card Number */}
-                      <StyledTableCell align="center" className="border-r border-gray-300">{payment.MaskedCardNumber}</StyledTableCell>
+                      <TableCell align="center" className="border-r border-gray-300">{payment.MaskedCardNumber}</TableCell>
 
                       {/* Payment Comments */}
-                      <StyledTableCell align="center" className="border-r">{payment.PaymentComments}</StyledTableCell>
+                      <TableCell align="center" className="border-r">{payment.PaymentComments}</TableCell>
 
                       {/* Edit Button */}
-                      <StyledTableCell align="center" className="border-r border-gray-300">
+                      <TableCell align="center" className="border-r border-gray-300">
                       <button
                             type="button"
                             onClick={() => handleEditPayment(payment.PaymentID)}
@@ -470,10 +465,10 @@ const Payment = () => {
                             />
                             Edit
                           </button>
-                      </StyledTableCell>
+                      </TableCell>
 
                       {/* Delete Button */}
-                      <StyledTableCell align="center">
+                      <TableCell align="center">
                       <div className="button-container justify-center">
                           <button
                             type="button"
@@ -487,7 +482,7 @@ const Payment = () => {
                             Delete
                           </button>
                         </div>
-                        </StyledTableCell>
+                        </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

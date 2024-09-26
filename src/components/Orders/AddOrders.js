@@ -84,7 +84,6 @@ function AddOrders() {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('success');
   const { generatedId, setGeneratedId, orderDate, setOrderDate } = useContext(IdContext);
-  const { orderIdDetails, setOrderIdDetails, getOrderById } = useContext(OrderContext);
   useEffect(() => {
     if (isDialogOpen) {
       setSelectedCountry(selectedCustomer?.CountryID || "");
@@ -100,10 +99,7 @@ function AddOrders() {
   useEffect(() => {
     fetchData(searchValue);
   }, []);
-  const isEditMode = Boolean(
-    location.state?.orderIdDetails?.order || orderIdDetails?.order
 
-  );
   const fetchData = async (value) => {
     try {
       // If isEditMode is true, return early and do not proceed with the data fetching
@@ -164,7 +160,7 @@ function AddOrders() {
     } catch (error) {
       console.error("Error fetching users:", error);
     }
-  };
+  };  
   
   const handleAutoFill = async () => {
     if (!selectedCustomer) {
@@ -327,7 +323,7 @@ function AddOrders() {
     };
   }, []);
 
-
+  const { orderIdDetails, setOrderIdDetails, getOrderById } = useContext(OrderContext);
   const [searchValue, setSearchValue] = useState("");
 
   const handleChangePage = (event, newPage) => {
@@ -366,7 +362,7 @@ function AddOrders() {
     TenantID: 1,
     CustomerID: selectedCustomer.CustomerID,
     OrderDate: "",
-    TotalQuantity: 0,
+    TotalQuantity: 1,
     Address: {
       AddressLine1: "",
       AddressLine2: "",
@@ -378,7 +374,7 @@ function AddOrders() {
     AddressID: selectedAddress.AddressID,
     TotalAmount: "",
     OrderStatus: "",
-    TotalQuantity: 0,
+    TotalQuantity: 1,
     OrderBy: "",
     Type: "",
     DeliveryDate: "",
@@ -527,7 +523,6 @@ function AddOrders() {
     });
   };
 
-
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (images.length + files.length > 6) {
@@ -551,6 +546,10 @@ function AddOrders() {
     setImages(newImages);
     setImagePreviews(newPreviews);
   }
+  const isEditMode = Boolean(
+    location.state?.orderIdDetails?.order || orderIdDetails?.order
+
+  );
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -653,7 +652,7 @@ function AddOrders() {
       TenantID: 1,
       CustomerID: selectedCustomer?.CustomerID || "",
       OrderDate: "",
-      TotalQuantity: 0,
+      TotalQuantity: 1,
       AddressID: selectedAddress?.AddressID || "",
       AddressLine1: "",
       AddressLine2: "",
@@ -701,7 +700,7 @@ function AddOrders() {
       TenantID: 1,
       CustomerID: selectedCustomer.CustomerID,
       OrderDate: "",
-      TotalQuantity: 0,
+      TotalQuantity: 1,
       AddressID: selectedAddress.AddressID,
       // Address: {
       //   AddressLine1: "",
@@ -1054,21 +1053,21 @@ function AddOrders() {
       // Ensure country, state, city, gender, and role options exist before finding values
       if (countries && primaryAddress?.CountryID) {
         const selectedCountry = countries.find(
-          (country) => country.CountryID === primaryAddress.CountryID
+          (country) => country.CountryID === primaryAddress.CountryID||""
         );
         setSelectedCountry(selectedCountry || {});
       }
 
       if (states && primaryAddress?.StateID) {
         const selectedState = states.find(
-          (state) => state.StateID === primaryAddress.StateID
+          (state) => state.StateID === primaryAddress.StateID||""
         );
         setSelectedState(selectedState || {});
       }
 
       if (cities && primaryAddress?.CityID) {
         const selectedCity = cities.find(
-          (city) => city.CityID === primaryAddress.CityID
+          (city) => city.CityID === primaryAddress.CityID||""
         );
         setSelectedCity(selectedCity || {});
       }
@@ -1077,7 +1076,7 @@ function AddOrders() {
       if (primaryAddress?.CountryID && !states?.length) {
         fetchStatesByCountry(primaryAddress.CountryID).then((fetchedStates) => {
           const state = fetchedStates?.find(
-            (s) => s.StateID === primaryAddress.StateID
+            (s) => s.StateID === primaryAddress.StateID||""
           );
           setSelectedState(state || {});
         });
@@ -1087,7 +1086,7 @@ function AddOrders() {
       if (primaryAddress?.StateID && !cities?.length) {
         fetchCitiesByState(primaryAddress.StateID).then((fetchedCities) => {
           const city = fetchedCities?.find(
-            (c) => c.CityID === primaryAddress.CityID
+            (c) => c.CityID === primaryAddress.CityID||""
           );
           setSelectedCity(city || {});
         });
@@ -1217,7 +1216,7 @@ function AddOrders() {
 
   return (
     <>
-      <div className="p-6 mr-10 mb-7 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-80 w-1/8 mt-8 bg-white shadow-lg rounded-lg">
+       <div className="main-container">
         <ToastContainer />
         <Box sx={{ width: "100%" }}>
           <Stepper activeStep={activeStep} className="mb-6" alternativeLabel>
@@ -1739,8 +1738,8 @@ function AddOrders() {
                                     setQuery(event.target.value)
                                   }
                                   displayValue={(platform) => platform || ""}
-                                />
-                                <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                                 />
+                                 <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
                                   <ChevronUpDownIcon
                                     className="h-5 w-5 text-gray-400"
                                     aria-hidden="true"

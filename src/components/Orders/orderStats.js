@@ -19,7 +19,8 @@ import { FiDownload } from "react-icons/fi";
 import StatusBadge from "./Statuses"; // Make sure you have this component
 import Step2 from "./payment";
 import { useNavigate } from "react-router-dom";
-import { CREATEORUPDATE_ORDER_HISTORY__API } from "../../Constants/apiRoutes";
+import { CREATEORUPDATE_ORDER_HISTORY__API} from "../../Constants/apiRoutes";
+import{ORDER_STATUS_API } from "../../Constants/apiRoutes";
 import LoadingAnimation from "../Loading/LoadingAnimation";
 import { IdContext } from "../../Context/IdContex";
 import { GETORDERBYID_API } from "../../Constants/apiRoutes";
@@ -104,15 +105,13 @@ const YourComponent = ({ onBack, onNext }) => {
   }, []);
   const handleChanging = (e) => {
     const { value } = e.target;
-
     const selectedStatus = orderStatusList.find(
       (status) => status.StatusID === parseInt(value)
     );
-
-    // Update orderDetails with selected OrderStatus and StatusID
     setOrderDetails({
+      ...orderDetails,
       OrderStatus: selectedStatus ? selectedStatus.OrderStatus : "",
-      StatusID: value, // Store StatusID directly from selection
+      StatusID: value,
     });
   };
   const saveOrderHistory = () => {
@@ -220,7 +219,6 @@ const YourComponent = ({ onBack, onNext }) => {
         closeModalAfterDelay(); // Close modal after a delay for errors
       });
   };
-  // Close the modal and move to the next step after a delay
   const closeModalAndMoveToNextStep = () => {
     setTimeout(() => {
       setShowModal(false);
@@ -236,32 +234,91 @@ const YourComponent = ({ onBack, onNext }) => {
   };
 
   // Fetch the order details based on the generatedId
-  const fetchOrderDetails = async () => {
+const fetchOrderDetails = async (generatedId) => {
+  try {
+    const response = await fetch(`${GETORDERBYID_API}/${generatedId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+
+    const data = await response.json();
+    return data; // Return the fetched data so it can be used elsewhere
+  } catch (err) {
+    console.error("Error fetching order details:", err);
+    throw err; // Re-throw the error to handle it in handleEdit
+  }
+};
+
+// useEffect hook to refetch order details when `generatedId` changes
+useEffect(() => {
+  const fetchData = async () => {
     try {
-      const response = await fetch(`${GETORDERBYID_API}/${generatedId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-
-      const data = await response.json();
-      setTableOrderDetails(data.order); // Update table with fetched order details
-    } catch (err) {
-      setError(err.message); // Handle fetch error
+      const data = await fetchOrderDetails(generatedId);
+      setTableOrderDetails(data.order||""); // Update table with fetched order details
+    } catch (error) {
+      setError(error.message); // Handle fetch error
     } finally {
       setLoading(false); // Stop loading indicator
     }
   };
+  
+  fetchData();
+}, [generatedId]);
 
-  // UseEffect hook to refetch order details when `generatedId` changes
-  useEffect(() => {
-    fetchOrderDetails();
-  }, [generatedId]); // Dependency on `generatedId`
+// handleEdit function to use the fetchOrderDetails function
+const handleEdit = async (generatedId) => {
+  try {
+    const response = await fetchOrderDetails(generatedId);
+
+    // Log the response to ensure the data is received correctly
+    console.log("Fetched Data:", response);
+
+setFormOrderDetails((prevState) => ({
+  ...prevState,
+  OrderStatus: response.order.OrderStatus || "", // Set 'OrderStatus'
+  assginto: response.order.AssignTo || "", // Set 'AssignTo'
+  Comments: response.order.Comments || "", // Set 'Comments'
+  ExpectedDurationDays: calculateDurationDays(
+    response.order.StartDate,
+    response.order.EndDate
+  ), // Calculate duration between 'StartDate' and 'EndDate'
+  DeliveryDate: response.order.EndDate || "", // Set 'EndDate' to 'DeliveryDate'
+}));
+
+// Debugging: Log to check if OrderStatus is received correctly
+console.log("OrderStatus from response:", response.order.OrderStatus);
+  const selectedStatus = orderStatusList.find(
+    (status) => status.StatusID === response.order?.OrderStatus
+  );
+
+// Set the selected status for the dropdown
+setSelectedStatus(response.order.OrderStatus || "");
+}
+
+  catch (error) {
+    console.error("Error fetching order details:", error);
+  }
+};
+
+// Helper function to calculate the duration between two dates
+const calculateDurationDays = (startDate, endDate) => {
+  if (!startDate || !endDate) return 0; // Handle undefined or null dates
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (isNaN(start) || isNaN(end)) {
+    console.error("Invalid date format:", { startDate, endDate });
+    return 0;
+  }
+
+  const duration = Math.ceil((end - start) / (1000 * 60 * 60 * 24)); // Difference in days
+  return duration;
+};
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -355,10 +412,10 @@ const YourComponent = ({ onBack, onNext }) => {
     return result.toISOString().split("T")[0]; // Format as 'YYYY-MM-DD'
   };
   const handleCancel = () => {
-    // Example: Reset form or navigate to a different page
+ 
     console.log("Cancel clicked");
-    // If you want to navigate away from the form, for example:
-    navigate("/Orders"); // This assumes you're using `react-router-dom` for navigation
+ 
+    navigate("/Orders"); 
   };
   const [selectedStatus, setSelectedStatus] = useState(
     orderDetails.StatusID || ""
@@ -372,41 +429,18 @@ const YourComponent = ({ onBack, onNext }) => {
           status.OrderStatus.toLowerCase().includes(query.toLowerCase())
         );
 
-  const handleSelect = (statusID) => {
-    setSelectedStatus(statusID);
-    handleChanging({ target: { name: "OrderStatus", value: statusID } });
-  };
+        const handleSelect = (statusID) => {
+          console.log("Selected status ID:", statusID); // Log the selected status ID
+          setSelectedStatus(statusID); // Update the selected status
+          setFormOrderDetails((prevState) => ({
+            ...prevState,
+            OrderStatus: statusID, // Update formOrderDetails with the selected status ID
+          }));
+        };
+        
+        
 
-  const handleEdit = async (generatedId) => {
-    try {
-      // Assume the response is stored in 'response.data'
-      const response = await fetchOrderDetails(generatedId); // Example API call to fetch order details
-      const data = response.data;
-
-      // Set the form fields from the response data
-      setFormOrderDetails((prevState) => ({
-        ...prevState,
-        OrderStatus: data.OrderHistoryStatus || "", // Set 'OrderHistoryStatus' to 'OrderStatus'
-        assginto: data.AssignTo || "", // Set 'AssignTo' to 'assginto'
-        ExpectedDurationDays: calculateDurationDays(
-          data.StartDate,
-          data.EndDate
-        ), // Calculate duration between 'StartDate' and 'EndDate'
-        DeliveryDate: data.EndDate || "", // Set 'EndDate' to 'DeliveryDate'
-      }));
-    } catch (error) {
-      console.error("Error fetching order details:", error);
-    }
-  };
-
-  // Helper function to calculate the duration between two dates
-  const calculateDurationDays = (startDate, endDate) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const duration = Math.ceil((end - start) / (1000 * 60 * 60 * 24)); // Difference in days
-    return duration;
-  };
-
+  
   return (
     <Box
       sx={{
@@ -425,7 +459,7 @@ const YourComponent = ({ onBack, onNext }) => {
               Order Status:
             </label>
 
-            <Combobox value={selectedStatus} onChange={handleSelect}>
+             <Combobox value={selectedStatus} onChange={handleSelect}>
               <div className="relative w-full sm:w-1/4">
                 <Combobox.Input
                   className={`p-1 w-full border rounded-md ${
@@ -464,7 +498,8 @@ const YourComponent = ({ onBack, onNext }) => {
                   )}
                 </Combobox.Options>
               </div>
-            </Combobox>
+            </Combobox> 
+
 
             {errors.OrderStatus && (
               <p className="text-red-500 text-sm ml-2">{errors.OrderStatus}</p>

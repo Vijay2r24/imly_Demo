@@ -49,3 +49,4 @@ export const GETORDERBYID_API = `${BASE_URL}/orders/getOrderById`;
 export const CREATEORUPDATE_PAYMENT_API=`${BASE_URL}/payments/payments/createOrUpdatePayment`;
 export const CREATEORUPDATE_ORDER_HISTORY__API=`${BASE_URL}/orderhistory/order-histories/createorderhistory`;
 export const ORDER_STATUS_API=`${BASE_URL}/Orderstatus/getAllOrderStatus`;
+export const GET_ALL_HYSTORYID_API=`${BASE_URL}/api/orderhistory/orderhistory`;
