@@ -16,7 +16,7 @@ import { ChevronUpDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
-import LoadingAnimation from "../../components/Loading/LoadingAnimation";
+import LoadingAnimation from "../Loading/LoadingAnimation";
 import {
   Table,
   TableBody,

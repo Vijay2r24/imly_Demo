@@ -1,2473 +1,36 @@
-// import React, { useState } from 'react';
-// import FormWizard from 'react-form-wizard-component';
-// import 'react-form-wizard-component/dist/style.css';
-// import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
 
-// function AddOrders() {
-//   const [orderDetails, setOrderDetails] = useState({
-//     name: '',
-//     orderStatus: 'Pending',
-//     email: '',
-//     deliveryDate: '',
-//     phone: '',
-//     address: '',
-//     createdBy: '',
-//     design: '',
-//     type: 'Kitchen, Wardrobe, Living',
-//   });
-
-//   const [submittedOrders, setSubmittedOrders] = useState([]);
-//   const [errors, setErrors] = useState({});
-//   const [showAlert, setShowAlert] = useState(false);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setOrderDetails({ ...orderDetails, [name]: value });
-//   };
-
-//   const handleSubmit = () => {
-//     const newErrors = {};
-//     if (!orderDetails.name) newErrors.name = 'Name is required';
-//     if (!orderDetails.orderStatus) newErrors.orderStatus = 'Order Status is required';
-//     if (!orderDetails.email) newErrors.email = 'Email is required';
-//     if (!orderDetails.deliveryDate) newErrors.deliveryDate = 'Expected Delivery Date is required';
-//     if (!orderDetails.phone) newErrors.phone = 'Phone is required';
-//     if (!orderDetails.address) newErrors.address = 'Address is required';
-//     if (!orderDetails.createdBy) newErrors.createdBy = 'Created By is required';
-//     if (!orderDetails.design) newErrors.design = 'Design is required';
-//     if (!orderDetails.type) newErrors.type = 'Type is required';
-
-//     if (Object.keys(newErrors).length > 0) {
-//       setErrors(newErrors);
-//       return;
-//     }
-
-//     // Add the current order to the list of submitted orders
-//     setSubmittedOrders([...submittedOrders, orderDetails]);
-//     setErrors({});
-//     setShowAlert(true);
-
-//     // Clear the form
-//     setOrderDetails({
-//       name: '',
-//       orderStatus: 'Pending',
-//       email: '',
-//       deliveryDate: '',
-//       phone: '',
-//       address: '',
-//       createdBy: '',
-//       design: '',
-//       type: 'Kitchen, Wardrobe, Living',
-//     });
-//   };
-
-//   const handleComplete = () => {
-//     handleSubmit();
-//     console.log("Form completed!");
-//   };
-
-//   const tabChanged = ({ prevIndex, nextIndex }) => {
-//     console.log("prevIndex", prevIndex);
-//     console.log("nextIndex", nextIndex);
-//   };
-
-//   return (
-//     <div className="max-w-6xl mx-auto ml-80 mt-10 p-6 bg-white shadow-lg rounded-lg">
-//       <h2 className="text-2xl font-bold text-gray-700 mb-6">Add Order</h2>
-
-//       {/* Success Alert */}
-//       {showAlert && (
-//         <div className="rounded-md bg-green-50 p-4 mb-4">
-//           <div className="flex">
-//             <div className="flex-shrink-0">
-//               <CheckCircleIcon aria-hidden="true" className="h-5 w-5 text-green-400" />
-//             </div>
-//             <div className="ml-3">
-//               <p className="text-sm font-medium text-green-800">Order successfully added!</p>
-//             </div>
-//             <div className="ml-auto pl-3">
-//               <button
-//                 onClick={() => setShowAlert(false)}
-//                 className="inline-flex rounded-md bg-green-50 p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-50"
-//               >
-//                 <span className="sr-only">Dismiss</span>
-//                 <XMarkIcon aria-hidden="true" className="h-5 w-5" />
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Form Wizard */}
-//       <FormWizard inlineStep={true} onComplete={handleComplete} onTabChange={tabChanged}>
-//         {/* Form Steps here */}
-//         <FormWizard.TabContent title="Customer Details" icon="ti-user">
-//           <div className="grid grid-cols-2 gap-6">
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700">Name</label>
-//               <input
-//                 type="text"
-//                 name="name"
-//                 value={orderDetails.name}
-//                 onChange={handleChange}
-//                 className={`mt-1 p-2 w-full border rounded-md ${errors.name ? 'border-red-500' : ''}`}
-//               />
-//               {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700">Order Status</label>
-//               <select
-//                 name="orderStatus"
-//                 value={orderDetails.orderStatus}
-//                 onChange={handleChange}
-//                 className={`mt-1 p-2 w-full border rounded-md ${errors.orderStatus ? 'border-red-500' : ''}`}
-//               >
-//                 <option value="Select a status">Select a Status</option>
-//                 <option value="Pending">Pending</option>
-//                 <option value="Processed">Processed</option>
-//               </select>
-//               {errors.orderStatus && <p className="text-red-500 text-sm">{errors.orderStatus}</p>}
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700">Email</label>
-//               <input
-//                 type="email"
-//                 name="email"
-//                 value={orderDetails.email}
-//                 onChange={handleChange}
-//                 className={`mt-1 p-2 w-full border rounded-md ${errors.email ? 'border-red-500' : ''}`}
-//               />
-//               {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700">Exp Delivery Date</label>
-//               <input
-//                 type="date"
-//                 name="deliveryDate"
-//                 value={orderDetails.deliveryDate}
-//                 onChange={handleChange}
-//                 className={`mt-1 p-2 w-full border rounded-md ${errors.deliveryDate ? 'border-red-500' : ''}`}
-//               />
-//               {errors.deliveryDate && <p className="text-red-500 text-sm">{errors.deliveryDate}</p>}
-//             </div>
-//           </div>
-//         </FormWizard.TabContent>
-
-//         <FormWizard.TabContent title="Order Details" icon="ti-settings">
-//           <div className="grid grid-cols-2 gap-6">
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700">Phone</label>
-//               <input
-//                 type="tel"
-//                 name="phone"
-//                 value={orderDetails.phone}
-//                 onChange={handleChange}
-//                 className={`mt-1 p-2 w-full border rounded-md ${errors.phone ? 'border-red-500' : ''}`}
-//               />
-//               {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700">Address</label>
-//               <input
-//                 type="text"
-//                 name="address"
-//                 value={orderDetails.address}
-//                 onChange={handleChange}
-//                 className={`mt-1 p-2 w-full border rounded-md ${errors.address ? 'border-red-500' : ''}`}
-//               />
-//               {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700">Created By</label>
-//               <input
-//                 type="text"
-//                 name="createdBy"
-//                 value={orderDetails.createdBy}
-//                 onChange={handleChange}
-//                 className={`mt-1 p-2 w-full border rounded-md ${errors.createdBy ? 'border-red-500' : ''}`}
-//               />
-//               {errors.createdBy && <p className="text-red-500 text-sm">{errors.createdBy}</p>}
-//             </div>
-//             <div>
-//               <label className="block text-sm font-medium text-gray-700">Design</label>
-//               <input
-//                 type="text"
-//                 name="design"
-//                 value={orderDetails.design}
-//                 onChange={handleChange}
-//                 className={`mt-1 p-2 w-full border rounded-md ${errors.design ? 'border-red-500' : ''}`}
-//               />
-//               {errors.design && <p className="text-red-500 text-sm">{errors.design}</p>}
-//             </div>
-//           </div>
-//         </FormWizard.TabContent>
-
-//         <FormWizard.TabContent title="Product Type" icon="ti-check">
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Type</label>
-//             <select
-//               name="type"
-//               value={orderDetails.type}
-//               onChange={handleChange}
-//               className={`mt-1 p-2 w-full border rounded-md ${errors.type ? 'border-red-500' : ''}`}
-//             >
-//               <option value="Select a type">Select a Type</option>
-//               <option value="Kitchen, Wardrobe, Living">Kitchen, Wardrobe, Living</option>
-//             </select>
-//             {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
-//           </div>
-//         </FormWizard.TabContent>
-//       </FormWizard>
-
-//       {/* Report Section */}
-//       <div className="mt-10">
-//         <h3 className="text-xl font-bold text-gray-700 mb-4">Submitted Orders Report</h3>
-//         {submittedOrders.length === 0 ? (
-//           <p className="text-gray-500">No orders submitted yet.</p>
-//         ) : (
-//           <table className="min-w-full bg-white">
-//             <thead>
-//               <tr>
-//                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Name</th>
-//                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Order Status</th>
-//                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Email</th>
-//                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Delivery Date</th>
-//                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Phone</th>
-//                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Address</th>
-//                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Created By</th>
-//                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Design</th>
-//                 <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Type</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {submittedOrders.map((order, index) => (
-//                 <tr key={index} className="border-b">
-//                   <td className="px-4 py-2 text-sm text-gray-600">{order.name}</td>
-//                   <td className="px-4 py-2 text-sm text-gray-600">{order.orderStatus}</td>
-//                   <td className="px-4 py-2 text-sm text-gray-600">{order.email}</td>
-//                   <td className="px-4 py-2 text-sm text-gray-600">{order.deliveryDate}</td>
-//                   <td className="px-4 py-2 text-sm text-gray-600">{order.phone}</td>
-//                   <td className="px-4 py-2 text-sm text-gray-600">{order.address}</td>
-//                   <td className="px-4 py-2 text-sm text-gray-600">{order.createdBy}</td>
-//                   <td className="px-4 py-2 text-sm text-gray-600">{order.design}</td>
-//                   <td className="px-4 py-2 text-sm text-gray-600">{order.type}</td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default AddOrders;
-
-
-// import React, { useState } from 'react';
-// import FormWizard from 'react-form-wizard-component';
-// import 'react-form-wizard-component/dist/style.css';
-// import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
-
-// function AddOrders() {
-//   const [orderDetails, setOrderDetails] = useState({
-//     name: '',
-//     orderStatus: 'Pending',
-//     email: '',
-//     deliveryDate: '',
-//     phone: '',
-//     address: '',
-//     createdBy: '',
-//     design: '',
-//     type: 'Kitchen, Wardrobe, Living',
-//   });
-
-//   const [submittedOrders, setSubmittedOrders] = useState([]);
-//   const [errors, setErrors] = useState({});
-//   const [showAlert, setShowAlert] = useState(false);
-//   const [view, setView] = useState('form'); // 'form' or 'report'
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setOrderDetails({ ...orderDetails, [name]: value });
-//   };
-
-//   const handleSubmit = () => {
-//     const newErrors = {};
-//     if (!orderDetails.name) newErrors.name = 'Name is required';
-//     if (!orderDetails.orderStatus) newErrors.orderStatus = 'Order Status is required';
-//     if (!orderDetails.email) newErrors.email = 'Email is required';
-//     if (!orderDetails.deliveryDate) newErrors.deliveryDate = 'Expected Delivery Date is required';
-//     if (!orderDetails.phone) newErrors.phone = 'Phone is required';
-//     if (!orderDetails.address) newErrors.address = 'Address is required';
-//     if (!orderDetails.createdBy) newErrors.createdBy = 'Created By is required';
-//     if (!orderDetails.design) newErrors.design = 'Design is required';
-//     if (!orderDetails.type) newErrors.type = 'Type is required';
-
-//     if (Object.keys(newErrors).length > 0) {
-//       setErrors(newErrors);
-//       return;
-//     }
-
-//     // Add the current order to the list of submitted orders
-//     setSubmittedOrders([...submittedOrders, orderDetails]);
-//     setErrors({});
-//     setShowAlert(true);
-
-//     // Clear the form
-//     setOrderDetails({
-//       name: '',
-//       orderStatus: 'Pending',
-//       email: '',
-//       deliveryDate: '',
-//       phone: '',
-//       address: '',
-//       createdBy: '',
-//       design: '',
-//       type: 'Kitchen, Wardrobe, Living',
-//     });
-//   };
-
-//   const handleComplete = () => {
-//     handleSubmit();
-//     console.log("Form completed!");
-//   };
-
-//   const tabChanged = ({ prevIndex, nextIndex }) => {
-//     console.log("prevIndex", prevIndex);
-//     console.log("nextIndex", nextIndex);
-//   };
-
-//   return (
-//     <div className="max-w-6xl ml-80 mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-//       <div className="flex justify-between mb-6">
-//         <button
-//           onClick={() => setView('form')}
-//           className={`px-4 py-2 rounded-md ${view === 'form' ? 'bg-gray-700 text-white' : 'bg-gray-300'}`}
-//         >
-//           Form
-//         </button>
-//         <button
-//           onClick={() => setView('report')}
-//           className={`px-4 py-2 rounded-md ${view === 'report' ? 'bg-gray-700 text-white' : 'bg-gray-300'}`}
-//         >
-//           Report
-//         </button>
-//       </div>
-
-//       {view === 'form' && (
-//         <>
-//           {/* Success Alert */}
-//           {showAlert && (
-//             <div className="rounded-md bg-green-50 p-4 mb-4">
-//               <div className="flex">
-//                 <div className="flex-shrink-0">
-//                   <CheckCircleIcon aria-hidden="true" className="h-5 w-5 text-green-400" />
-//                 </div>
-//                 <div className="ml-3">
-//                   <p className="text-sm font-medium text-green-800">Order successfully added!</p>
-//                 </div>
-//                 <div className="ml-auto pl-3">
-//                   <button
-//                     onClick={() => setShowAlert(false)}
-//                     className="inline-flex rounded-md bg-green-50 p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-50"
-//                   >
-//                     <span className="sr-only">Dismiss</span>
-//                     <XMarkIcon aria-hidden="true" className="h-5 w-5" />
-//                   </button>
-//                 </div>
-//               </div>
-//             </div>
-//           )}
-
-//           {/* Form Wizard */}
-//           <FormWizard inlineStep={true} onComplete={handleComplete} onTabChange={tabChanged}>
-//             {/* Form Steps here */}
-//             <FormWizard.TabContent title="Customer Details" icon="ti-user">
-//               <div className="grid grid-cols-2 gap-6">
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Name</label>
-//                   <input
-//                     type="text"
-//                     name="name"
-//                     value={orderDetails.name}
-//                     onChange={handleChange}
-//                     className={`mt-1 p-2 w-full border rounded-md ${errors.name ? 'border-red-500' : ''}`}
-//                   />
-//                   {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-//                 </div>
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Order Status</label>
-//                   <select
-//                     name="orderStatus"
-//                     value={orderDetails.orderStatus}
-//                     onChange={handleChange}
-//                     className={`mt-1 p-2 w-full border rounded-md ${errors.orderStatus ? 'border-red-500' : ''}`}
-//                   >
-//                     <option value="Select a status">Select a Status</option>
-//                     <option value="Pending">Pending</option>
-//                     <option value="Processed">Processed</option>
-//                   </select>
-//                   {errors.orderStatus && <p className="text-red-500 text-sm">{errors.orderStatus}</p>}
-//                 </div>
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Email</label>
-//                   <input
-//                     type="email"
-//                     name="email"
-//                     value={orderDetails.email}
-//                     onChange={handleChange}
-//                     className={`mt-1 p-2 w-full border rounded-md ${errors.email ? 'border-red-500' : ''}`}
-//                   />
-//                   {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-//                 </div>
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Exp Delivery Date</label>
-//                   <input
-//                     type="date"
-//                     name="deliveryDate"
-//                     value={orderDetails.deliveryDate}
-//                     onChange={handleChange}
-//                     className={`mt-1 p-2 w-full border rounded-md ${errors.deliveryDate ? 'border-red-500' : ''}`}
-//                   />
-//                   {errors.deliveryDate && <p className="text-red-500 text-sm">{errors.deliveryDate}</p>}
-//                 </div>
-//               </div>
-//             </FormWizard.TabContent>
-
-//             <FormWizard.TabContent title="Order Details" icon="ti-settings">
-//               <div className="grid grid-cols-2 gap-6">
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Phone</label>
-//                   <input
-//                     type="tel"
-//                     name="phone"
-//                     value={orderDetails.phone}
-//                     onChange={handleChange}
-//                     className={`mt-1 p-2 w-full border rounded-md ${errors.phone ? 'border-red-500' : ''}`}
-//                   />
-//                   {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
-//                 </div>
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Address</label>
-//                   <input
-//                     type="text"
-//                     name="address"
-//                     value={orderDetails.address}
-//                     onChange={handleChange}
-//                     className={`mt-1 p-2 w-full border rounded-md ${errors.address ? 'border-red-500' : ''}`}
-//                   />
-//                   {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
-//                 </div>
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Created By</label>
-//                   <input
-//                     type="text"
-//                     name="createdBy"
-//                     value={orderDetails.createdBy}
-//                     onChange={handleChange}
-//                     className={`mt-1 p-2 w-full border rounded-md ${errors.createdBy ? 'border-red-500' : ''}`}
-//                   />
-//                   {errors.createdBy && <p className="text-red-500 text-sm">{errors.createdBy}</p>}
-//                 </div>
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Design</label>
-//                   <input
-//                     type="text"
-//                     name="design"
-//                     value={orderDetails.design}
-//                     onChange={handleChange}
-//                     className={`mt-1 p-2 w-full border rounded-md ${errors.design ? 'border-red-500' : ''}`}
-//                   />
-//                   {errors.design && <p className="text-red-500 text-sm">{errors.design}</p>}
-//                 </div>
-//               </div>
-//             </FormWizard.TabContent>
-
-//             <FormWizard.TabContent title="Product Type" icon="ti-check">
-//               <div>
-//                 <label className="block text-sm font-medium text-gray-700">Type</label>
-//                 <select
-//                   name="type"
-//                   value={orderDetails.type}
-//                   onChange={handleChange}
-//                   className={`mt-1 p-2 w-full border rounded-md ${errors.type ? 'border-red-500' : ''}`}
-//                 >
-//                   <option value="Select a type">Select a Type</option>
-//                   <option value="Kitchen, Wardrobe, Living">Kitchen, Wardrobe, Living</option>
-//                 </select>
-//                 {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
-//               </div>
-//             </FormWizard.TabContent>
-//           </FormWizard>
-//         </>
-//       )}
-
-//       {view === 'report' && (
-//         <div className="mt-10">
-//           <h3 className="text-xl font-bold text-gray-700 mb-4">Submitted Orders Report</h3>
-//           {submittedOrders.length === 0 ? (
-//             <p className="text-gray-500">No orders submitted yet.</p>
-//           ) : (
-//             <table className="min-w-full bg-white">
-//               <thead>
-//                 <tr>
-//                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Name</th>
-//                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Order Status</th>
-//                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Email</th>
-//                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Delivery Date</th>
-//                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Phone</th>
-//                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Address</th>
-//                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Created By</th>
-//                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Design</th>
-//                   <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">Type</th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {submittedOrders.map((order, index) => (
-//                   <tr key={index} className="border-b">
-//                     <td className="px-4 py-2 text-sm text-gray-600">{order.name}</td>
-//                     <td className="px-4 py-2 text-sm text-gray-600">{order.orderStatus}</td>
-//                     <td className="px-4 py-2 text-sm text-gray-600">{order.email}</td>
-//                     <td className="px-4 py-2 text-sm text-gray-600">{order.deliveryDate}</td>
-//                     <td className="px-4 py-2 text-sm text-gray-600">{order.phone}</td>
-//                     <td className="px-4 py-2 text-sm text-gray-600">{order.address}</td>
-//                     <td className="px-4 py-2 text-sm text-gray-600">{order.createdBy}</td>
-//                     <td className="px-4 py-2 text-sm text-gray-600">{order.design}</td>
-//                     <td className="px-4 py-2 text-sm text-gray-600">{order.type}</td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
-//           )}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default AddOrders;
-
-
-// import React, { useState } from 'react';
-
-// function ReportGenerator() {
-//   const [salesReport, setSalesReport] = useState({
-//     dateRange: { startDate: '', endDate: '' },
-//     productCategory: '',
-//     salesChannel: '',
-//     region: '',
-//     customerDemographics: {
-//       ageGroup: '',
-//       gender: '',
-//       incomeBracket: '',
-//     },
-//     includeTopSellingProducts: false,
-//   });
-
-//   const [inventoryReport, setInventoryReport] = useState({
-//     dateRange: { startDate: '', endDate: '' },
-//     productCategory: '',
-//     stockLevelThreshold: '',
-//     showOutOfStockItems: false,
-//     showSlowMovingItems: false,
-//     generateReorderRecommendations: false,
-//   });
-
-//   const [customerFeedbackReport, setCustomerFeedbackReport] = useState({
-//     dateRange: { startDate: '', endDate: '' },
-//     productCategory: '',
-//     feedbackType: '',
-//     filterByNpsScore: '',
-//     includeCustomerComments: false,
-//   });
-
-//   const handleInputChange = (reportType, field, value) => {
-//     switch (reportType) {
-//       case 'salesReport':
-//         setSalesReport({ ...salesReport, [field]: value });
-//         break;
-//       case 'inventoryReport':
-//         setInventoryReport({ ...inventoryReport, [field]: value });
-//         break;
-//       case 'customerFeedbackReport':
-//         setCustomerFeedbackReport({ ...customerFeedbackReport, [field]: value });
-//         break;
-//       default:
-//         break;
-//     }
-//   };
-
-//   const handleDemographicsChange = (field, value) => {
-//     setSalesReport({
-//       ...salesReport,
-//       customerDemographics: { ...salesReport.customerDemographics, [field]: value },
-//     });
-//   };
-
-//   const handleSubmit = (reportType) => {
-//     switch (reportType) {
-//       case 'salesReport':
-//         console.log('Sales Report:', salesReport);
-//         break;
-//       case 'inventoryReport':
-//         console.log('Inventory Report:', inventoryReport);
-//         break;
-//       case 'customerFeedbackReport':
-//         console.log('Customer Feedback Report:', customerFeedbackReport);
-//         break;
-//       default:
-//         break;
-//     }
-//   };
-
-//   return (
-//     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-//       <h2 className="text-2xl font-bold mb-4">Report Generator</h2>
-
-//       {/* Sales Report Form */}
-//       <div className="mb-8">
-//         <h3 className="text-xl font-semibold mb-4">Sales Report</h3>
-//         <div className="grid grid-cols-2 gap-6">
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Start Date</label>
-//             <input
-//               type="date"
-//               value={salesReport.dateRange.startDate}
-//               onChange={(e) =>
-//                 handleInputChange('salesReport', 'dateRange', {
-//                   ...salesReport.dateRange,
-//                   startDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">End Date</label>
-//             <input
-//               type="date"
-//               value={salesReport.dateRange.endDate}
-//               onChange={(e) =>
-//                 handleInputChange('salesReport', 'dateRange', {
-//                   ...salesReport.dateRange,
-//                   endDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Product Category</label>
-//             <select
-//               value={salesReport.productCategory}
-//               onChange={(e) => handleInputChange('salesReport', 'productCategory', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Category</option>
-//               {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Sales Channel</label>
-//             <select
-//               value={salesReport.salesChannel}
-//               onChange={(e) => handleInputChange('salesReport', 'salesChannel', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Channel</option>
-//               {['Online', 'In-store', 'All'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Region</label>
-//             <select
-//               value={salesReport.region}
-//               onChange={(e) => handleInputChange('salesReport', 'region', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Region</option>
-//               {['North', 'South', 'East', 'West', 'All'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Age Group</label>
-//             <select
-//               value={salesReport.customerDemographics.ageGroup}
-//               onChange={(e) => handleDemographicsChange('ageGroup', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Age Group</option>
-//               {['18-25', '26-35', '36-50', '50+'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Gender</label>
-//             <select
-//               value={salesReport.customerDemographics.gender}
-//               onChange={(e) => handleDemographicsChange('gender', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Gender</option>
-//               {['Male', 'Female', 'Other'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Income Bracket</label>
-//             <select
-//               value={salesReport.customerDemographics.incomeBracket}
-//               onChange={(e) => handleDemographicsChange('incomeBracket', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Income Bracket</option>
-//               {['Low', 'Middle', 'High'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={salesReport.includeTopSellingProducts}
-//                 onChange={(e) => handleInputChange('salesReport', 'includeTopSellingProducts', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Include Top-Selling Products</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <button
-//               onClick={() => handleSubmit('salesReport')}
-//               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//             >
-//               Generate Report
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Inventory Report Form */}
-//       <div className="mb-8">
-//         <h3 className="text-xl font-semibold mb-4">Inventory Report</h3>
-//         <div className="grid grid-cols-2 gap-6">
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Start Date</label>
-//             <input
-//               type="date"
-//               value={inventoryReport.dateRange.startDate}
-//               onChange={(e) =>
-//                 handleInputChange('inventoryReport', 'dateRange', {
-//                   ...inventoryReport.dateRange,
-//                   startDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">End Date</label>
-//             <input
-//               type="date"
-//               value={inventoryReport.dateRange.endDate}
-//               onChange={(e) =>
-//                 handleInputChange('inventoryReport', 'dateRange', {
-//                   ...inventoryReport.dateRange,
-//                   endDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Product Category</label>
-//             <select
-//               value={inventoryReport.productCategory}
-//               onChange={(e) => handleInputChange('inventoryReport', 'productCategory', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Category</option>
-//               {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Stock Level Threshold</label>
-//             <input
-//               type="number"
-//               value={inventoryReport.stockLevelThreshold}
-//               onChange={(e) => handleInputChange('inventoryReport', 'stockLevelThreshold', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//               placeholder="Enter threshold value"
-//             />
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={inventoryReport.showOutOfStockItems}
-//                 onChange={(e) => handleInputChange('inventoryReport', 'showOutOfStockItems', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Show Out-of-Stock Items</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={inventoryReport.showSlowMovingItems}
-//                 onChange={(e) => handleInputChange('inventoryReport', 'showSlowMovingItems', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Show Slow-Moving Items</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={inventoryReport.generateReorderRecommendations}
-//                 onChange={(e) => handleInputChange('inventoryReport', 'generateReorderRecommendations', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Generate Reorder Recommendations</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <button
-//               onClick={() => handleSubmit('inventoryReport')}
-//               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//             >
-//               Generate Report
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Customer Feedback Report Form */}
-//       <div>
-//         <h3 className="text-xl font-semibold mb-4">Customer Feedback Report</h3>
-//         <div className="grid grid-cols-2 gap-6">
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Start Date</label>
-//             <input
-//               type="date"
-//               value={customerFeedbackReport.dateRange.startDate}
-//               onChange={(e) =>
-//                 handleInputChange('customerFeedbackReport', 'dateRange', {
-//                   ...customerFeedbackReport.dateRange,
-//                   startDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">End Date</label>
-//             <input
-//               type="date"
-//               value={customerFeedbackReport.dateRange.endDate}
-//               onChange={(e) =>
-//                 handleInputChange('customerFeedbackReport', 'dateRange', {
-//                   ...customerFeedbackReport.dateRange,
-//                   endDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Product Category</label>
-//             <select
-//               value={customerFeedbackReport.productCategory}
-//               onChange={(e) => handleInputChange('customerFeedbackReport', 'productCategory', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Category</option>
-//               {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Feedback Type</label>
-//             <select
-//               value={customerFeedbackReport.feedbackType}
-//               onChange={(e) => handleInputChange('customerFeedbackReport', 'feedbackType', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Feedback Type</option>
-//               {['Satisfaction Score', 'Reviews', 'Complaints', 'Customization Feedback'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div className="col-span-2">
-//             <label className="block text-sm font-medium text-gray-700">Filter by NPS Score</label>
-//             <input
-//               type="number"
-//               value={customerFeedbackReport.filterByNpsScore}
-//               onChange={(e) => handleInputChange('customerFeedbackReport', 'filterByNpsScore', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//               placeholder="Enter NPS threshold"
-//             />
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={customerFeedbackReport.includeCustomerComments}
-//                 onChange={(e) => handleInputChange('customerFeedbackReport', 'includeCustomerComments', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Include Customer Comments</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <button
-//               onClick={() => handleSubmit('customerFeedbackReport')}
-//               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//             >
-//               Generate Report
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default ReportGenerator;
-
-
-// import React, { useState } from 'react';
-
-// function ReportGenerator() {
-//   const [salesReport, setSalesReport] = useState({
-//     dateRange: { startDate: '', endDate: '' },
-//     productCategory: '',
-//     salesChannel: '',
-//     region: '',
-//     customerDemographics: {
-//       ageGroup: '',
-//       gender: '',
-//       incomeBracket: '',
-//     },
-//     includeTopSellingProducts: false,
-//   });
-
-//   const [inventoryReport, setInventoryReport] = useState({
-//     dateRange: { startDate: '', endDate: '' },
-//     productCategory: '',
-//     stockLevelThreshold: '',
-//     showOutOfStockItems: false,
-//     showSlowMovingItems: false,
-//     generateReorderRecommendations: false,
-//   });
-
-//   const [customerFeedbackReport, setCustomerFeedbackReport] = useState({
-//     dateRange: { startDate: '', endDate: '' },
-//     productCategory: '',
-//     feedbackType: '',
-//     filterByNpsScore: '',
-//     includeCustomerComments: false,
-//   });
-
-//   const [generatedReport, setGeneratedReport] = useState(null);
-
-//   const handleInputChange = (reportType, field, value) => {
-//     switch (reportType) {
-//       case 'salesReport':
-//         setSalesReport({ ...salesReport, [field]: value });
-//         break;
-//       case 'inventoryReport':
-//         setInventoryReport({ ...inventoryReport, [field]: value });
-//         break;
-//       case 'customerFeedbackReport':
-//         setCustomerFeedbackReport({ ...customerFeedbackReport, [field]: value });
-//         break;
-//       default:
-//         break;
-//     }
-//   };
-
-//   const handleDemographicsChange = (field, value) => {
-//     setSalesReport({
-//       ...salesReport,
-//       customerDemographics: { ...salesReport.customerDemographics, [field]: value },
-//     });
-//   };
-
-//   const handleSubmit = (reportType) => {
-//     let reportData;
-//     switch (reportType) {
-//       case 'salesReport':
-//         reportData = salesReport;
-//         break;
-//       case 'inventoryReport':
-//         reportData = inventoryReport;
-//         break;
-//       case 'customerFeedbackReport':
-//         reportData = customerFeedbackReport;
-//         break;
-//       default:
-//         return;
-//     }
-//     setGeneratedReport({ reportType, data: reportData });
-//   };
-
-//   const renderTable = (reportType, data) => {
-//     switch (reportType) {
-//       case 'salesReport':
-//         return (
-//           <table className="min-w-full bg-white border border-gray-200 rounded-md">
-//             <thead>
-//               <tr>
-//                 <th className="border px-4 py-2">Field</th>
-//                 <th className="border px-4 py-2">Value</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               <tr>
-//                 <td className="border px-4 py-2">Start Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.startDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">End Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.endDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Product Category</td>
-//                 <td className="border px-4 py-2">{data.productCategory}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Sales Channel</td>
-//                 <td className="border px-4 py-2">{data.salesChannel}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Region</td>
-//                 <td className="border px-4 py-2">{data.region}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Age Group</td>
-//                 <td className="border px-4 py-2">{data.customerDemographics.ageGroup}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Gender</td>
-//                 <td className="border px-4 py-2">{data.customerDemographics.gender}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Income Bracket</td>
-//                 <td className="border px-4 py-2">{data.customerDemographics.incomeBracket}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Include Top-Selling Products</td>
-//                 <td className="border px-4 py-2">{data.includeTopSellingProducts ? 'Yes' : 'No'}</td>
-//               </tr>
-//             </tbody>
-//           </table>
-//         );
-//       case 'inventoryReport':
-//         return (
-//           <table className="min-w-full bg-white border border-gray-200 rounded-md">
-//             <thead>
-//               <tr>
-//                 <th className="border px-4 py-2">Field</th>
-//                 <th className="border px-4 py-2">Value</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               <tr>
-//                 <td className="border px-4 py-2">Start Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.startDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">End Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.endDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Product Category</td>
-//                 <td className="border px-4 py-2">{data.productCategory}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Stock Level Threshold</td>
-//                 <td className="border px-4 py-2">{data.stockLevelThreshold}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Show Out of Stock Items</td>
-//                 <td className="border px-4 py-2">{data.showOutOfStockItems ? 'Yes' : 'No'}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Show Slow-Moving Items</td>
-//                 <td className="border px-4 py-2">{data.showSlowMovingItems ? 'Yes' : 'No'}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Generate Reorder Recommendations</td>
-//                 <td className="border px-4 py-2">{data.generateReorderRecommendations ? 'Yes' : 'No'}</td>
-//               </tr>
-//             </tbody>
-//           </table>
-//         );
-//       case 'customerFeedbackReport':
-//         return (
-//           <table className="min-w-full bg-white border border-gray-200 rounded-md">
-//             <thead>
-//               <tr>
-//                 <th className="border px-4 py-2">Field</th>
-//                 <th className="border px-4 py-2">Value</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               <tr>
-//                 <td className="border px-4 py-2">Start Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.startDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">End Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.endDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Product Category</td>
-//                 <td className="border px-4 py-2">{data.productCategory}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Feedback Type</td>
-//                 <td className="border px-4 py-2">{data.feedbackType}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Filter by NPS Score</td>
-//                 <td className="border px-4 py-2">{data.filterByNpsScore}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Include Customer Comments</td>
-//                 <td className="border px-4 py-2">{data.includeCustomerComments ? 'Yes' : 'No'}</td>
-//               </tr>
-//             </tbody>
-//           </table>
-//         );
-//       default:
-//         return null;
-//     }
-//   };
-
-//   return (
-//     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-//       <h2 className="text-2xl font-bold mb-4">Report Generator</h2>
-
-//       {/* Sales Report Form */}
-//       <div className="mb-8">
-//         <h3 className="text-xl font-semibold mb-4">Sales Report</h3>
-//         <div className="grid grid-cols-2 gap-6">
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Start Date</label>
-//             <input
-//               type="date"
-//               value={salesReport.dateRange.startDate}
-//               onChange={(e) =>
-//                 handleInputChange('salesReport', 'dateRange', {
-//                   ...salesReport.dateRange,
-//                   startDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">End Date</label>
-//             <input
-//               type="date"
-//               value={salesReport.dateRange.endDate}
-//               onChange={(e) =>
-//                 handleInputChange('salesReport', 'dateRange', {
-//                   ...salesReport.dateRange,
-//                   endDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Product Category</label>
-//             <select
-//               value={salesReport.productCategory}
-//               onChange={(e) => handleInputChange('salesReport', 'productCategory', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Category</option>
-//               {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Sales Channel</label>
-//             <select
-//               value={salesReport.salesChannel}
-//               onChange={(e) => handleInputChange('salesReport', 'salesChannel', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Channel</option>
-//               {['Online', 'In-Store', 'Both'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Region</label>
-//             <select
-//               value={salesReport.region}
-//               onChange={(e) => handleInputChange('salesReport', 'region', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Region</option>
-//               {['North', 'South', 'East', 'West'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Age Group</label>
-//             <select
-//               value={salesReport.customerDemographics.ageGroup}
-//               onChange={(e) => handleDemographicsChange('ageGroup', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Age Group</option>
-//               {['18-24', '25-34', '35-44', '45-54', '55+'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Gender</label>
-//             <select
-//               value={salesReport.customerDemographics.gender}
-//               onChange={(e) => handleDemographicsChange('gender', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Gender</option>
-//               {['Male', 'Female', 'Other'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Income Bracket</label>
-//             <select
-//               value={salesReport.customerDemographics.incomeBracket}
-//               onChange={(e) => handleDemographicsChange('incomeBracket', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Income Bracket</option>
-//               {['Under $25,000', '$25,000 - $49,999', '$50,000 - $74,999', '$75,000 - $99,999', '$100,000+'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={salesReport.includeTopSellingProducts}
-//                 onChange={(e) => handleInputChange('salesReport', 'includeTopSellingProducts', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Include Top-Selling Products</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <button
-//               onClick={() => handleSubmit('salesReport')}
-//               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//             >
-//               Generate Report
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Inventory Report Form */}
-//       <div className="mb-8">
-//         <h3 className="text-xl font-semibold mb-4">Inventory Report</h3>
-//         <div className="grid grid-cols-2 gap-6">
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Start Date</label>
-//             <input
-//               type="date"
-//               value={inventoryReport.dateRange.startDate}
-//               onChange={(e) =>
-//                 handleInputChange('inventoryReport', 'dateRange', {
-//                   ...inventoryReport.dateRange,
-//                   startDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">End Date</label>
-//             <input
-//               type="date"
-//               value={inventoryReport.dateRange.endDate}
-//               onChange={(e) =>
-//                 handleInputChange('inventoryReport', 'dateRange', {
-//                   ...inventoryReport.dateRange,
-//                   endDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Product Category</label>
-//             <select
-//               value={inventoryReport.productCategory}
-//               onChange={(e) => handleInputChange('inventoryReport', 'productCategory', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Category</option>
-//               {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Stock Level Threshold</label>
-//             <input
-//               type="number"
-//               value={inventoryReport.stockLevelThreshold}
-//               onChange={(e) => handleInputChange('inventoryReport', 'stockLevelThreshold', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={inventoryReport.showOutOfStockItems}
-//                 onChange={(e) => handleInputChange('inventoryReport', 'showOutOfStockItems', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Show Out of Stock Items</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={inventoryReport.showSlowMovingItems}
-//                 onChange={(e) => handleInputChange('inventoryReport', 'showSlowMovingItems', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Show Slow-Moving Items</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={inventoryReport.generateReorderRecommendations}
-//                 onChange={(e) => handleInputChange('inventoryReport', 'generateReorderRecommendations', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Generate Reorder Recommendations</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <button
-//               onClick={() => handleSubmit('inventoryReport')}
-//               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//             >
-//               Generate Report
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Customer Feedback Report Form */}
-//       <div className="mb-8">
-//         <h3 className="text-xl font-semibold mb-4">Customer Feedback Report</h3>
-//         <div className="grid grid-cols-2 gap-6">
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Start Date</label>
-//             <input
-//               type="date"
-//               value={customerFeedbackReport.dateRange.startDate}
-//               onChange={(e) =>
-//                 handleInputChange('customerFeedbackReport', 'dateRange', {
-//                   ...customerFeedbackReport.dateRange,
-//                   startDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">End Date</label>
-//             <input
-//               type="date"
-//               value={customerFeedbackReport.dateRange.endDate}
-//               onChange={(e) =>
-//                 handleInputChange('customerFeedbackReport', 'dateRange', {
-//                   ...customerFeedbackReport.dateRange,
-//                   endDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Product Category</label>
-//             <select
-//               value={customerFeedbackReport.productCategory}
-//               onChange={(e) => handleInputChange('customerFeedbackReport', 'productCategory', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Category</option>
-//               {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Feedback Type</label>
-//             <select
-//               value={customerFeedbackReport.feedbackType}
-//               onChange={(e) => handleInputChange('customerFeedbackReport', 'feedbackType', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Feedback Type</option>
-//               {['Positive', 'Negative', 'Neutral'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Filter by NPS Score</label>
-//             <input
-//               type="number"
-//               value={customerFeedbackReport.filterByNpsScore}
-//               onChange={(e) => handleInputChange('customerFeedbackReport', 'filterByNpsScore', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={customerFeedbackReport.includeCustomerComments}
-//                 onChange={(e) => handleInputChange('customerFeedbackReport', 'includeCustomerComments', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Include Customer Comments</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <button
-//               onClick={() => handleSubmit('customerFeedbackReport')}
-//               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//             >
-//               Generate Report
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Display Report */}
-//       {generatedReport && (
-//         <div className="mt-8">
-//           <h3 className="text-xl font-semibold mb-4">Generated Report: {generatedReport.reportType.replace(/([A-Z])/g, ' $1')}</h3>
-//           {renderTable(generatedReport.reportType, generatedReport.data)}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default ReportGenerator;
-
-
-// import React, { useState } from 'react';
-// import {  useNavigate } from 'react-router-dom';
-// import * as XLSX from 'xlsx';
-// import { jsPDF } from 'jspdf';
-
-// function ReportGenerator() {
-//   const [activeTab, setActiveTab] = useState('salesReport');
-//   const navigate = useNavigate()
-
-
-//   const [salesReport, setSalesReport] = useState({
-//     dateRange: { startDate: '', endDate: '' },
-//     productCategory: '',
-//     salesChannel: '',
-//     region: '',
-//     customerDemographics: {
-//       ageGroup: '',
-//       gender: '',
-//       incomeBracket: '',
-//     },
-//     includeTopSellingProducts: false,
-//   });
-
-//   const [inventoryReport, setInventoryReport] = useState({
-//     dateRange: { startDate: '', endDate: '' },
-//     productCategory: '',
-//     stockLevelThreshold: '',
-//     showOutOfStockItems: false,
-//     showSlowMovingItems: false,
-//     generateReorderRecommendations: false,
-//   });
-
-//   const [customerFeedbackReport, setCustomerFeedbackReport] = useState({
-//     dateRange: { startDate: '', endDate: '' },
-//     productCategory: '',
-//     feedbackType: '',
-//     filterByNpsScore: '',
-//     includeCustomerComments: false,
-//   });
-
-//   const [generatedReport, setGeneratedReport] = useState(null);
-
-//   const handleInputChange = (reportType, field, value) => {
-//     switch (reportType) {
-//       case 'salesReport':
-//         setSalesReport({ ...salesReport, [field]: value });
-//         break;
-//       case 'inventoryReport':
-//         setInventoryReport({ ...inventoryReport, [field]: value });
-//         break;
-//       case 'customerFeedbackReport':
-//         setCustomerFeedbackReport({ ...customerFeedbackReport, [field]: value });
-//         break;
-//       default:
-//         break;
-//     }
-//   };
-
-//   const handleDemographicsChange = (field, value) => {
-//     setSalesReport({
-//       ...salesReport,
-//       customerDemographics: { ...salesReport.customerDemographics, [field]: value },
-//     });
-//   };
-
-//   const handleSubmit = (reportType) => {
-//     let reportData;
-//     switch (reportType) {
-//       case 'salesReport':
-//         reportData = salesReport;
-//         break;
-//       case 'inventoryReport':
-//         reportData = inventoryReport;
-//         break;
-//       case 'customerFeedbackReport':
-//         reportData = customerFeedbackReport;
-//         break;
-//       default:
-//         return;
-//     }
-//     setGeneratedReport({ reportType, data: reportData });
-//   };
-//   // const exportToExcel = (reportType, data) => {
-//   //   const ws = XLSX.utils.json_to_sheet(data);
-//   //   const wb = XLSX.utils.book_new();
-//   //   XLSX.utils.book_append_sheet(wb, ws, `${reportType} Report`);
-//   //   XLSX.writeFile(wb, `${reportType}_report.xlsx`);
-//   // };
-
-//   // const exportToPDF = (reportType, data) => {
-//   //   const doc = new jsPDF();
-//   //   doc.setFontSize(12);
-
-//   //   doc.text(`${reportType.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} Report`, 10, 10);
-
-//   //   let yOffset = 20;
-//   //   data.forEach((report, index) => {
-//   //     if (yOffset > 270) { // Check if page is full
-//   //       doc.addPage();
-//   //       yOffset = 10;
-//   //     }
-//   //     doc.text(`${index + 1}. ${JSON.stringify(report)}`, 10, yOffset);
-//   //     yOffset += 10;
-//   //   });
-
-//   //   doc.save(`${reportType}_report.pdf`);
-//   // };
-
-//   const exportToExcel = (reportType, data) => {
-//     const dataArray = Array.isArray(data) ? data : [data];
-//     const ws = XLSX.utils.json_to_sheet(dataArray);
-//     const wb = XLSX.utils.book_new();
-//     XLSX.utils.book_append_sheet(wb, ws, `${reportType} Report`);
-//     XLSX.writeFile(wb, `${reportType}_report.xlsx`);
-//   };
-  
-//   const exportToPDF = (reportType, data) => {
-//     const dataArray = Array.isArray(data) ? data : [data];
-//     const doc = new jsPDF();
-//     doc.setFontSize(12);
-  
-//     doc.text(`${reportType.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} Report`, 10, 10);
-  
-//     let yOffset = 20;
-//     dataArray.forEach((report, index) => {
-//       if (yOffset > 270) { // Check if page is full
-//         doc.addPage();
-//         yOffset = 10;
-//       }
-//       doc.text(`${index + 1}. ${JSON.stringify(report)}`, 10, yOffset);
-//       yOffset += 10;
-//     });
-  
-//     doc.save(`${reportType}_report.pdf`);
-//   };
-  
-
-//   const renderTable = (reportType, data) => {
-//     switch (reportType) {
-//       case 'salesReport':
-//         return (
-//           <table className="min-w-full bg-white border border-gray-200 rounded-md">
-//             <thead>
-//               <tr>
-//                 <th className="border px-4 py-2">Field</th>
-//                 <th className="border px-4 py-2">Value</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               <tr>
-//                 <td className="border px-4 py-2">Start Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.startDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">End Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.endDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Product Category</td>
-//                 <td className="border px-4 py-2">{data.productCategory}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Sales Channel</td>
-//                 <td className="border px-4 py-2">{data.salesChannel}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Region</td>
-//                 <td className="border px-4 py-2">{data.region}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Age Group</td>
-//                 <td className="border px-4 py-2">{data.customerDemographics.ageGroup}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Gender</td>
-//                 <td className="border px-4 py-2">{data.customerDemographics.gender}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Income Bracket</td>
-//                 <td className="border px-4 py-2">{data.customerDemographics.incomeBracket}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Include Top-Selling Products</td>
-//                 <td className="border px-4 py-2">{data.includeTopSellingProducts ? 'Yes' : 'No'}</td>
-//               </tr>
-//             </tbody>
-//           </table>
-//         );
-//       case 'inventoryReport':
-//         return (
-//           <table className="min-w-full bg-white border border-gray-200 rounded-md">
-//             <thead>
-//               <tr>
-//                 <th className="border px-4 py-2">Field</th>
-//                 <th className="border px-4 py-2">Value</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               <tr>
-//                 <td className="border px-4 py-2">Start Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.startDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">End Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.endDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Product Category</td>
-//                 <td className="border px-4 py-2">{data.productCategory}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Stock Level Threshold</td>
-//                 <td className="border px-4 py-2">{data.stockLevelThreshold}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Show Out of Stock Items</td>
-//                 <td className="border px-4 py-2">{data.showOutOfStockItems ? 'Yes' : 'No'}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Show Slow-Moving Items</td>
-//                 <td className="border px-4 py-2">{data.showSlowMovingItems ? 'Yes' : 'No'}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Generate Reorder Recommendations</td>
-//                 <td className="border px-4 py-2">{data.generateReorderRecommendations ? 'Yes' : 'No'}</td>
-//               </tr>
-//             </tbody>
-//           </table>
-//         );
-//       case 'customerFeedbackReport':
-//         return (
-//           <table className="min-w-full bg-white border border-gray-200 rounded-md">
-//             <thead>
-//               <tr>
-//                 <th className="border px-4 py-2">Field</th>
-//                 <th className="border px-4 py-2">Value</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               <tr>
-//                 <td className="border px-4 py-2">Start Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.startDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">End Date</td>
-//                 <td className="border px-4 py-2">{data.dateRange.endDate}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Product Category</td>
-//                 <td className="border px-4 py-2">{data.productCategory}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Feedback Type</td>
-//                 <td className="border px-4 py-2">{data.feedbackType}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Filter by NPS Score</td>
-//                 <td className="border px-4 py-2">{data.filterByNpsScore}</td>
-//               </tr>
-//               <tr>
-//                 <td className="border px-4 py-2">Include Customer Comments</td>
-//                 <td className="border px-4 py-2">{data.includeCustomerComments ? 'Yes' : 'No'}</td>
-//               </tr>
-//             </tbody>
-//           </table>
-//         );
-//       default:
-//         return null;
-//     }
-//   };
-
-//   return (
-//     // <div className="max-w-5xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-//     <div className="px-4 sm:px-6 lg:px-8 pt-4  ml-10 lg:ml-80 w-auto p-6 bg-white shadow-lg rounded-lg  mt-10 mx-10 mb-10 ">
-
-//       <h2 className="text-2xl font-bold mb-4">Report Generator</h2>
-
-//       {/* Tab Navigation */}
-//       <div className="flex space-x-4 mb-6">
-//         <button
-//           onClick={() => setActiveTab('salesReport')}
-//           className={`px-4 py-2 rounded-md ${activeTab === 'salesReport' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-//         >
-//           Sales Report
-//         </button>
-//         <button
-//           onClick={() => setActiveTab('inventoryReport')}
-//           className={`px-4 py-2 rounded-md ${activeTab === 'inventoryReport' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-//         >
-//           Inventory Report
-//         </button>
-//         <button
-//           onClick={() => setActiveTab('customerFeedbackReport')}
-//           className={`px-4 py-2 rounded-md ${activeTab === 'customerFeedbackReport' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-//         >
-//           Customer Feedback
-//         </button>
-//         {/* <button           className="px-4 py-2 rounded-md hover:bg-blue-500 hover:text-white   bg-gray-200 text-gray-700"
-//         onClick={()=> navigate('/ReportsStatic')}
-//         >All Repots</button> */}
-//       </div>
-
-//       {/* Form Fields */}
-//       {activeTab === 'salesReport' && (
-//         <>
-//           {/* Sales Report Fields */}
-//           {/* <div>
-//             <label className="block mb-2">Start Date</label>
-//             <input
-//               type="date"
-//               value={salesReport.dateRange.startDate}
-//               onChange={(e) => handleInputChange('salesReport', 'dateRange', { ...salesReport.dateRange, startDate: e.target.value })}
-//               className="border rounded p-2 w-full"
-//             />
-//           </div> */}
-//           <div className="mb-8">
-//   <h3 className="text-xl font-semibold mb-4">Sales Report</h3>
-//   <div className="grid grid-cols-1 gap-6">
-//     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//       <div>
-//         <label className="block text-sm font-medium text-gray-700">Start Date</label>
-//         <input
-//           type="date"
-//           value={salesReport.dateRange.startDate}
-//           onChange={(e) =>
-//             handleInputChange('salesReport', 'dateRange', {
-//               ...salesReport.dateRange,
-//               startDate: e.target.value,
-//             })
-//           }
-//           className="mt-1 p-2 w-full border rounded-md"
-//         />
-//       </div>
-//       <div>
-//         <label className="block text-sm font-medium text-gray-700">End Date</label>
-//         <input
-//           type="date"
-//           value={salesReport.dateRange.endDate}
-//           onChange={(e) =>
-//             handleInputChange('salesReport', 'dateRange', {
-//               ...salesReport.dateRange,
-//               endDate: e.target.value,
-//             })
-//           }
-//           className="mt-1 p-2 w-full border rounded-md"
-//         />
-//       </div>
-//       <div>
-//         <label className="block text-sm font-medium text-gray-700">Product Category</label>
-//         <select
-//           value={salesReport.productCategory}
-//           onChange={(e) => handleInputChange('salesReport', 'productCategory', e.target.value)}
-//           className="mt-1 p-2 w-full border rounded-md"
-//         >
-//           <option value="">Select Category</option>
-//           {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-//             <option key={i} value={option}>
-//               {option}
-//             </option>
-//           ))}
-//         </select>
-//       </div>
-//     </div>
-//     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//       <div>
-//         <label className="block text-sm font-medium text-gray-700">Sales Channel</label>
-//         <select
-//           value={salesReport.salesChannel}
-//           onChange={(e) => handleInputChange('salesReport', 'salesChannel', e.target.value)}
-//           className="mt-1 p-2 w-full border rounded-md"
-//         >
-//           <option value="">Select Channel</option>
-//           {['Online', 'In-Store', 'Both'].map((option, i) => (
-//             <option key={i} value={option}>
-//               {option}
-//             </option>
-//           ))}
-//         </select>
-//       </div>
-//       <div>
-//         <label className="block text-sm font-medium text-gray-700">Region</label>
-//         <select
-//           value={salesReport.region}
-//           onChange={(e) => handleInputChange('salesReport', 'region', e.target.value)}
-//           className="mt-1 p-2 w-full border rounded-md"
-//         >
-//           <option value="">Select Region</option>
-//           {['North', 'South', 'East', 'West'].map((option, i) => (
-//             <option key={i} value={option}>
-//               {option}
-//             </option>
-//           ))}
-//         </select>
-//       </div>
-//       <div>
-//         <label className="block text-sm font-medium text-gray-700">Age Group</label>
-//         <select
-//           value={salesReport.customerDemographics.ageGroup}
-//           onChange={(e) => handleDemographicsChange('ageGroup', e.target.value)}
-//           className="mt-1 p-2 w-full border rounded-md"
-//         >
-//           <option value="">Select Age Group</option>
-//           {['18-24', '25-34', '35-44', '45-54', '55+'].map((option, i) => (
-//             <option key={i} value={option}>
-//               {option}
-//             </option>
-//           ))}
-//         </select>
-//       </div>
-//     </div>
-//     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//       <div>
-//         <label className="block text-sm font-medium text-gray-700">Gender</label>
-//         <select
-//           value={salesReport.customerDemographics.gender}
-//           onChange={(e) => handleDemographicsChange('gender', e.target.value)}
-//           className="mt-1 p-2 w-full border rounded-md"
-//         >
-//           <option value="">Select Gender</option>
-//           {['Male', 'Female', 'Other'].map((option, i) => (
-//             <option key={i} value={option}>
-//               {option}
-//             </option>
-//           ))}
-//         </select>
-//       </div>
-//       <div>
-//         <label className="block text-sm font-medium text-gray-700">Income Bracket</label>
-//         <select
-//           value={salesReport.customerDemographics.incomeBracket}
-//           onChange={(e) => handleDemographicsChange('incomeBracket', e.target.value)}
-//           className="mt-1 p-2 w-full border rounded-md"
-//         >
-//           <option value="">Select Income Bracket</option>
-//           {['Under $25,000', '$25,000 - $49,999', '$50,000 - $74,999', '$75,000 - $99,999', '$100,000+'].map((option, i) => (
-//             <option key={i} value={option}>
-//               {option}
-//             </option>
-//           ))}
-//         </select>
-//       </div>
-//     </div>
-//     <div className="flex items-center space-x-2">
-//       <input
-//         type="checkbox"
-//         checked={salesReport.includeTopSellingProducts}
-//         onChange={(e) => handleInputChange('salesReport', 'includeTopSellingProducts', e.target.checked)}
-//         className="form-checkbox h-4 w-4"
-//       />
-//       <label className="text-sm font-medium text-gray-700">Include Top-Selling Products</label>
-//     </div>
-//     <div className="mt-4">
-//       <button
-//         onClick={() => handleSubmit('salesReport')}
-//         className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//       >
-//         Generate Report
-//       </button>
-    
-//     </div>
-//   </div>
-// </div>
-
-//           {/* Other fields for Sales Report */}
-         
-//           {/* More fields for Sales Report */}
-//           {/* Add fields similar to the existing ones for Inventory Report and Customer Feedback */}
-//         </>
-//       )}
-
-//       {activeTab === 'inventoryReport' && (
-//         <>
-//           {/* Inventory Report Fields */}
-//           {/* <div>
-//             <label className="block mb-2">Start Date</label>
-//             <input
-//               type="date"
-//               value={inventoryReport.dateRange.startDate}
-//               onChange={(e) => handleInputChange('inventoryReport', 'dateRange', { ...inventoryReport.dateRange, startDate: e.target.value })}
-//               className="border rounded p-2 w-full"
-//             />
-//           </div> */}
-//           {/* Other fields for Inventory Report */}
-//           {/* Add similar fields for Inventory Report */}
-//           <div className="mb-8">
-//         <h3 className="text-xl font-semibold mb-4">Inventory Report</h3>
-//          <div className="grid grid-cols-2 gap-6">
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Start Date</label>
-//              <input
-//               type="date"
-//               value={inventoryReport.dateRange.startDate}
-//               onChange={(e) =>
-//                 handleInputChange('inventoryReport', 'dateRange', {
-//                   ...inventoryReport.dateRange,
-//                   startDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">End Date</label>
-//             <input
-//               type="date"
-//               value={inventoryReport.dateRange.endDate}
-//               onChange={(e) =>
-//                 handleInputChange('inventoryReport', 'dateRange', {
-//                   ...inventoryReport.dateRange,
-//                   endDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Product Category</label>
-//             <select
-//               value={inventoryReport.productCategory}
-//               onChange={(e) => handleInputChange('inventoryReport', 'productCategory', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Category</option>
-//               {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Stock Level Threshold</label>
-//             <input
-//               type="number"
-//               value={inventoryReport.stockLevelThreshold}
-//               onChange={(e) => handleInputChange('inventoryReport', 'stockLevelThreshold', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={inventoryReport.showOutOfStockItems}
-//                 onChange={(e) => handleInputChange('inventoryReport', 'showOutOfStockItems', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Show Out of Stock Items</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={inventoryReport.showSlowMovingItems}
-//                 onChange={(e) => handleInputChange('inventoryReport', 'showSlowMovingItems', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Show Slow-Moving Items</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={inventoryReport.generateReorderRecommendations}
-//                 onChange={(e) => handleInputChange('inventoryReport', 'generateReorderRecommendations', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Generate Reorder Recommendations</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <button
-//               onClick={() => handleSubmit('inventoryReport')}
-//               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//             >
-//               Generate Report
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//         </>
-//       )}
-
-//       {activeTab === 'customerFeedbackReport' && (
-//         <>
-//           {/* Customer Feedback Report Fields */}
-//           {/* <div>
-//             <label className="block mb-2">Start Date</label>
-//             <input
-//               type="date"
-//               value={customerFeedbackReport.dateRange.startDate}
-//               onChange={(e) => handleInputChange('customerFeedbackReport', 'dateRange', { ...customerFeedbackReport.dateRange, startDate: e.target.value })}
-//               className="border rounded p-2 w-full"
-//             />
-//           </div> */}
-//           {/* Other fields for Customer Feedback Report */}
-//           {/* Add similar fields for Customer Feedback Report */}
-//           <div className="mb-8">
-//          <h3 className="text-xl font-semibold mb-4">Customer Feedback Report</h3>
-//         <div className="grid grid-cols-2 gap-6">
-//           <div>
-//              <label className="block text-sm font-medium text-gray-700">Start Date</label>
-//             <input
-//               type="date"
-//               value={customerFeedbackReport.dateRange.startDate}
-//               onChange={(e) =>
-//                 handleInputChange('customerFeedbackReport', 'dateRange', {
-//                   ...customerFeedbackReport.dateRange,
-//                   startDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">End Date</label>
-//             <input
-//               type="date"
-//               value={customerFeedbackReport.dateRange.endDate}
-//               onChange={(e) =>
-//                 handleInputChange('customerFeedbackReport', 'dateRange', {
-//                   ...customerFeedbackReport.dateRange,
-//                   endDate: e.target.value,
-//                 })
-//               }
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Product Category</label>
-//             <select
-//               value={customerFeedbackReport.productCategory}
-//               onChange={(e) => handleInputChange('customerFeedbackReport', 'productCategory', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Category</option>
-//               {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Feedback Type</label>
-//             <select
-//               value={customerFeedbackReport.feedbackType}
-//               onChange={(e) => handleInputChange('customerFeedbackReport', 'feedbackType', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             >
-//               <option value="">Select Feedback Type</option>
-//               {['Positive', 'Negative', 'Neutral'].map((option, i) => (
-//                 <option key={i} value={option}>
-//                   {option}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium text-gray-700">Filter by NPS Score</label>
-//             <input
-//               type="number"
-//               value={customerFeedbackReport.filterByNpsScore}
-//               onChange={(e) => handleInputChange('customerFeedbackReport', 'filterByNpsScore', e.target.value)}
-//               className="mt-1 p-2 w-full border rounded-md"
-//             />
-//           </div>
-//           <div className="col-span-2">
-//             <label className="flex items-center">
-//               <input
-//                 type="checkbox"
-//                 checked={customerFeedbackReport.includeCustomerComments}
-//                 onChange={(e) => handleInputChange('customerFeedbackReport', 'includeCustomerComments', e.target.checked)}
-//                 className="form-checkbox h-4 w-4"
-//               />
-//               <span className="ml-2 text-sm font-medium text-gray-700">Include Customer Comments</span>
-//             </label>
-//           </div>
-//           <div className="col-span-2">
-//             <button
-//               onClick={() => handleSubmit('customerFeedbackReport')}
-//               className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-//             >
-//               Generate Report
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//         </>
-//       )}
-
-//       {/* Submit Button */}
-//       {/* <div className="mt-4">
-//         <button
-//           onClick={() => handleSubmit(activeTab)}
-//           className="bg-blue-500 text-white px-4 py-2 rounded-md"
-//         >
-//           Generate Report
-//         </button>
-//       </div> */}
-
-//       {/* Generated Report Display */}
-//       {generatedReport && (
-//         <div className="mt-6">
-//           <h3 className="text-xl font-semibold mb-4">
-//             Generated {generatedReport.reportType.replace(/([a-z])([A-Z])/g, '$1 $2')} Report
-//           </h3>
-//           {renderTable(generatedReport.reportType, generatedReport.data)}
-//           <div className="mt-4">
-//             <button
-//               onClick={() => exportToExcel(generatedReport.reportType, generatedReport.data)}
-//               className="mr-4 px-4 py-2 bg-green-500 text-white rounded-md"
-//             >
-//               Export to Excel
-//             </button>
-//             <button
-//               onClick={() => exportToPDF(generatedReport.reportType, generatedReport.data)}
-//               className="px-4 py-2 bg-red-500 text-white rounded-md"
-//             >
-//               Export to PDF
-//             </button>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default ReportGenerator;
-
-
-// import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import * as XLSX from 'xlsx';
-// import { jsPDF } from 'jspdf';
-
-// function ReportGenerator() {
-//   const [activeTab, setActiveTab] = useState('salesReport');
-//   const navigate = useNavigate();
-
-//   const [salesReport, setSalesReport] = useState({
-//     dateRange: { startDate: '', endDate: '' },
-//     productCategory: '',
-//     store: '',  // Added store field
-//   });
-
-//   const [generatedReport, setGeneratedReport] = useState(null);
-
-//   const handleInputChange = (field, value) => {
-//     setSalesReport({ ...salesReport, [field]: value });
-//   };
-
-//   const handleSubmit = () => {
-//     setGeneratedReport({ reportType: 'salesReport', data: salesReport });
-//   };
-
-//   const exportToExcel = (reportType, data) => {
-//     const dataArray = Array.isArray(data) ? data : [data];
-//     const ws = XLSX.utils.json_to_sheet(dataArray);
-//     const wb = XLSX.utils.book_new();
-//     XLSX.utils.book_append_sheet(wb, ws, `${reportType} Report`);
-//     XLSX.writeFile(wb, `${reportType}_report.xlsx`);
-//   };
-
-//   const exportToPDF = (reportType, data) => {
-//     const dataArray = Array.isArray(data) ? data : [data];
-//     const doc = new jsPDF();
-//     doc.setFontSize(12);
-
-//     doc.text(`${reportType.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} Report`, 10, 10);
-
-//     let yOffset = 20;
-//     dataArray.forEach((report, index) => {
-//       if (yOffset > 270) { // Check if page is full
-//         doc.addPage();
-//         yOffset = 10;
-//       }
-//       doc.text(`${index + 1}. ${JSON.stringify(report)}`, 10, yOffset);
-//       yOffset += 10;
-//     });
-
-//     doc.save(`${reportType}_report.pdf`);
-//   };
-
-//   const renderTable = (data) => {
-//     return (
-//       <table className="min-w-full bg-white border border-gray-200 rounded-md">
-//         <thead>
-//           <tr>
-//             <th className="border px-4 py-2">Field</th>
-//             <th className="border px-4 py-2">Value</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           <tr>
-//             <td className="border px-4 py-2">Start Date</td>
-//             <td className="border px-4 py-2">{data.dateRange.startDate}</td>
-//           </tr>
-//           <tr>
-//             <td className="border px-4 py-2">End Date</td>
-//             <td className="border px-4 py-2">{data.dateRange.endDate}</td>
-//           </tr>
-//           <tr>
-//             <td className="border px-4 py-2">Product Category</td>
-//             <td className="border px-4 py-2">{data.productCategory}</td>
-//           </tr>
-//           <tr>
-//             <td className="border px-4 py-2">Store</td>
-//             <td className="border px-4 py-2">{data.store}</td>
-//           </tr>
-//         </tbody>
-//       </table>
-//     );
-//   };
-
-//   return (
-//     <div className="px-4 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-80 w-auto p-6 bg-white shadow-lg rounded-lg mt-10 mx-10 mb-10">
-//       <h2 className="text-2xl font-bold mb-4">Report Generator</h2>
-
-//       <div className="flex space-x-4 mb-6">
-//         <button
-//           onClick={() => setActiveTab('salesReport')}
-//           className={`px-4 py-2 rounded-md ${activeTab === 'salesReport' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-//         >
-//           Sales Report
-//         </button>
-//       </div>
-
-//       {activeTab === 'salesReport' && (
-//         <>
-//           <div className="mb-8">
-//             <h3 className="text-xl font-semibold mb-4">Sales Report</h3>
-//             <div className="grid grid-cols-1 gap-6">
-//               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Start Date</label>
-//                   <input
-//                     type="date"
-//                     value={salesReport.dateRange.startDate}
-//                     onChange={(e) => handleInputChange('dateRange', { ...salesReport.dateRange, startDate: e.target.value })}
-//                     className="mt-1 p-2 w-full border rounded-md"
-//                   />
-//                 </div>
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">End Date</label>
-//                   <input
-//                     type="date"
-//                     value={salesReport.dateRange.endDate}
-//                     onChange={(e) => handleInputChange('dateRange', { ...salesReport.dateRange, endDate: e.target.value })}
-//                     className="mt-1 p-2 w-full border rounded-md"
-//                   />
-//                 </div>
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Product Category</label>
-//                   <select
-//                     value={salesReport.productCategory}
-//                     onChange={(e) => handleInputChange('productCategory', e.target.value)}
-//                     className="mt-1 p-2 w-full border rounded-md"
-//                   >
-//                     <option value="">Select Category</option>
-//                     {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-//                       <option key={i} value={option}>
-//                         {option}
-//                       </option>
-//                     ))}
-//                   </select>
-//                 </div>
-//                 <div>
-//                   <label className="block text-sm font-medium text-gray-700">Store</label>
-//                   <select
-//                     value={salesReport.store}
-//                     onChange={(e) => handleInputChange('store', e.target.value)}
-//                     className="mt-1 p-2 w-full border rounded-md"
-//                   >
-//                     <option value="">Select Store</option>
-//                     {['Store 1', 'Store 2', 'Store 3'].map((option, i) => (
-//                       <option key={i} value={option}>
-//                         {option}
-//                       </option>
-//                     ))}
-//                   </select>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="flex space-x-4">
-//             <button
-//               onClick={handleSubmit}
-//               className="bg-blue-500 text-white px-4 py-2 rounded-md"
-//             >
-//               Generate Report
-//             </button>
-//             {generatedReport && (
-//               <>
-//                 <button
-//                   onClick={() => exportToExcel('salesReport', generatedReport.data)}
-//                   className="bg-green-500 text-white px-4 py-2 rounded-md"
-//                 >
-//                   Export to Excel
-//                 </button>
-//                 <button
-//                   onClick={() => exportToPDF('salesReport', generatedReport.data)}
-//                   className="bg-red-500 text-white px-4 py-2 rounded-md"
-//                 >
-//                   Export to PDF
-//                 </button>
-//               </>
-//             )}
-//           </div>
-
-//           {generatedReport && renderTable(generatedReport.data)}
-//         </>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default ReportGenerator;
-
-
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
-
+import { FaChartLine, FaMoneyBillWave, FaUndo, FaComments, FaFileAlt, FaClipboardList } from 'react-icons/fa'
+import { Combobox } from '@headlessui/react'; // Import Combobox from Headless UI
+import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'; // Adjust the path ba
+import { DateRangePicker } from 'rsuite';
+import 'rsuite/dist/rsuite.min.css';
+import axios from 'axios';
+import { FaCalendarAlt } from 'react-icons/fa';
+import { GETALLSTORES_API } from '../../Constants/apiRoutes'
 function ReportGenerator() {
   const [activeTab, setActiveTab] = useState('salesReport');
+  const [stores, setStores] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [orderIds, setOrderIds] = useState([]);
+  const [selectedOrderId, setSelectedOrderId] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState(''); // For storing the selected order number
+  // 1. Define the state for storing order status list and selected status
+  const [orderStatusList, setOrderStatusList] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState(null);
+
+
+  // 2. Define the state for handling input query and filtered status list
+  const [query, setQuery] = useState('');
+  const [filteredStatusList, setFilteredStatusList] = useState([]);
+
+  // 3. Define errors state for validation
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [storeNames, setStoreNames] = useState([]);
 
   const [salesReport, setSalesReport] = useState({
     dateRange: { startDate: '', endDate: '' },
@@ -2494,6 +57,10 @@ function ReportGenerator() {
   });
 
   const [generatedReport, setGeneratedReport] = useState(null);
+  const [selectedStore, setSelectedStore] = useState(null);
+  const [selectedStore2, setSelectedStore2] = useState(null);
+  const [selectedStore3, setSelectedStore3] = useState(null);
+  const [selectedStore4, setSelectedStore4] = useState(null);
 
   const handleInputChange = (reportType, field, value) => {
     if (reportType === 'salesReport') {
@@ -2546,389 +113,945 @@ function ReportGenerator() {
 
     doc.save(`${reportType}_report.pdf`);
   };
+  const [startDate, setStartDate] = useState(null);// State for the start date
+  const [startDate1, setStartDate1] = useState(null);
+  const [startDate2, setStartDate2] = useState(null);
+  const [startDate3, setStartDate3] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [endDate1, setEndDate1] = useState(null);
+  const [endDate2, setEndDate2] = useState(null);
+  const [endDate3, setEndDate3] = useState(null);// State for the end date
+  const [searchTerm, setSearchTerm] = useState('');
+  const [orders, setOrders] = useState([]);// State for the search term
+  const [filteredOrders, setFilteredOrders] = useState(orders); // State for filtered orders
 
-  const renderTable = (data) => {
-    return (
-      <table className="min-w-full bg-white border border-gray-200 rounded-md mt-6">
-        <thead>
-          <tr>
-            <th className="border px-4 py-2">Field</th>
-            <th className="border px-4 py-2">Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="border px-4 py-2">Start Date</td>
-            <td className="border px-4 py-2">{data.dateRange.startDate}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2">End Date</td>
-            <td className="border px-4 py-2">{data.dateRange.endDate}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2">Product Category</td>
-            <td className="border px-4 py-2">{data.productCategory}</td>
-          </tr>
-          <tr>
-            <td className="border px-4 py-2">Store</td>
-            <td className="border px-4 py-2">{data.store}</td>
-          </tr>
-        </tbody>
-      </table>
-    );
+
+  // Helper function to format dates to 'YYYY-MM-DD'
+  const formatDateForInput = (date) => {
+    if (!date) return ''; // Return empty string if no date
+    const d = new Date(date);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2); // Ensure 2 digits for month
+    const day = ('0' + d.getDate()).slice(-2); // Ensure 2 digits for day
+    return `${d.getFullYear()}-${month}-${day}`; // Format as 'YYYY-MM-DD'
   };
 
+  const handleDateRangeChange = (range) => {
+    if (range && range.length === 2) {
+      // When a valid range is selected
+      setStartDate(range[0]); // Set the start date
+      setEndDate(range[1]);   // Set the end date
+    } else {
+      // If no range is selected, reset both dates
+      setStartDate(null);
+      setEndDate(null);
+    }
+  };
+  const handleDateRangeChange1 = (range) => {
+    if (range && range.length === 2) {
+      // When a valid range is selected
+      setStartDate1(range[0]); // Set the start date
+      setEndDate1(range[1]);   // Set the end date
+    } else {
+      // If no range is selected, reset both dates
+      setStartDate1(null);
+      setEndDate1(null);
+    }
+  };
+  const handleDateRangeChange2 = (range) => {
+    if (range && range.length === 2) {
+      // When a valid range is selected
+      setStartDate2(range[0]); // Set the start date
+      setEndDate2(range[1]);   // Set the end date
+    } else {
+      // If no range is selected, reset both dates
+      setStartDate2(null);
+      setEndDate2(null);
+    }
+  };
+  const handleDateRangeChange3 = (range) => {
+    if (range && range.length === 2) {
+      // When a valid range is selected
+      setStartDate3(range[0]); // Set the start date
+      setEndDate3(range[1]);   // Set the end date
+    } else {
+      // If no range is selected, reset both dates
+      setStartDate3(null);
+      setEndDate3(null);
+    }
+  };
+  const [selectedReferralType, setSelectedReferralType] = useState("");
+  const [selectedReferenceSubOption, setSelectedReferenceSubOption] = useState("");
+  const [selectedSocialMediaPlatform, setSelectedSocialMediaPlatform] = useState("");
+  const [orderDetails, setOrderDetails] = useState({
+    ReferedBy: "",
+    refereeName: "",
+  });
+  const [error, setError] = useState("");
+
+  // Handle referral type selection
+  const handleReferralTypeChange = (value) => {
+    setSelectedReferralType(value);
+    setOrderDetails({ ...orderDetails, ReferedBy: value });
+    // Reset sub-options if switching referral types
+    setSelectedReferenceSubOption("");
+    setSelectedSocialMediaPlatform("");
+  };
+
+  // Handle sub-option changes for Reference
+  const handleReferenceSubOptionChange = (value) => {
+    setSelectedReferenceSubOption(value);
+  };
+
+  // Handle sub-option changes for Social Media Platform
+  const handleSocialMediaPlatformChange = (value) => {
+    setSelectedSocialMediaPlatform(value);
+  };
+
+  // Handle referee name input change
+  const handleRefereeNameChange = (e) => {
+    setOrderDetails({ ...orderDetails, refereeName: e.target.value });
+  };
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const response = await axios.get(GETALLSTORES_API);
+        console.log("API Response:", response.data);
+
+        // Extract the Stores array from the API response
+        const storesData = response.data.Stores || [];
+
+        // Check if it's an array and set store names
+        setStoreNames(Array.isArray(storesData) ? storesData : []);
+      } catch (error) {
+        console.error("Error fetching stores:", error);
+      }
+    };
+
+    fetchStores();
+  }, []);
+  //fe
+  useEffect(() => {
+    const fetchOrderStatuses = async () => {
+      try {
+        const response = await fetch(
+          "https://imly-b2y.onrender.com/api/Orderstatus/getAllOrderStatus"
+        );
+        const data = await response.json();
+
+        // Log the data to see its structure
+        console.log("Fetched Order Statuses:", data);
+
+        // Check if data is in the expected format
+        if (Array.isArray(data.data)) {
+          setOrderStatusList(data.data);
+        } else {
+          console.error("Data is not in the expected format:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching order statuses:", error);
+      }
+    };
+
+    fetchOrderStatuses();
+  }, []);
+
+  useEffect(() => {
+    const filtered = orderStatusList.filter((status) =>
+      status.OrderStatus.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredStatusList(filtered);
+  }, [query, orderStatusList]);
+
+  const handleSelect = (statusID) => {
+    setSelectedStatus(statusID);
+  };
+  // Fix: Define orders and setOrders
+
+
+  // Fetch all orders
+  useEffect(() => {
+    const fetchOrderNumbers = async () => {
+      try {
+        const response = await fetch('https://imly-b2y.onrender.com/api/orders/getAllOrders');
+        const data = await response.json();
+
+        if (data.StatusCode === "SUCCESS" && Array.isArray(data.data)) {
+          setOrders(data.data.map(order => order.OrderNumber)); // Set orders
+        } else {
+          console.error("Unexpected data format:", data);
+        }
+      } catch (error) {
+        console.error('Error fetching order numbers:', error);
+      }
+    };
+
+    fetchOrderNumbers();
+  }, []);
+
+  // Filter orders based on the search term
+  useEffect(() => {
+    const fetchOrderNumbers = async () => {
+      try {
+        const response = await fetch('https://imly-b2y.onrender.com/api/orders/getAllOrders');
+        const data = await response.json();
+
+        if (data.StatusCode === "SUCCESS" && Array.isArray(data.data)) {
+          setOrders(data.data.map(order => order.OrderNumber)); // Set orders
+        } else {
+          console.error("Unexpected data format:", data);
+        }
+      } catch (error) {
+        console.error('Error fetching order numbers:', error);
+      }
+    };
+
+    fetchOrderNumbers();
+  }, []);
+
+  // Filter orders based on the search term
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = orders.filter((orderNumber) =>
+        orderNumber.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredOrders(filtered);
+
+      // Automatically select the order if there is only one match
+      if (filtered.length === 1) {
+        setSearchTerm(filtered[0]);
+        setFilteredOrders([]); // Clear dropdown once a match is found
+      }
+    } else {
+      setFilteredOrders(orders); // Show all orders when search term is empty
+    }
+  }, [searchTerm, orders]);
+
+  const handleInputChange1 = (e) => {
+    setSearchTerm(e.target.value); // Update search term
+  };
+  const handleInputChange2 = (selectedOrder) => {
+    setSearchTerm(selectedOrder); // Set the selected order in the input
+    setFilteredOrders([]); // Clear dropdown after selection
+  };
+  // Define handleInputChange2 function
+  const [data, setData] = useState([]); // To store API response data
+  const postData = async () => {
+    const startDate = startDate1 ? formatDateForInput(new Date(startDate1)) : null;
+    const endDate = endDate1 ? formatDateForInput(new Date(endDate1)) : null;
+    const storeID = selectedStore2 ? selectedStore2.StoreID : null; // Use selectedStore3 for the store ID
+    const orderId = searchTerm || null;
+
+    const url = `https://imly-b2y.onrender.com/api/reports//getPaymentReport?startDate=${startDate}&endDate=${endDate}&storeId=${storeID}&orderId=${orderId}`;
+
+    try {
+      // Make the API call
+      const response = await axios.get(url, { responseType: 'blob' }); // Important for file downloads
+
+      // Create a blob URL for the response data
+      const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = blobUrl;
+
+      // Set the default file name for the downloaded file
+      const contentDisposition = response.headers['content-disposition'];
+      const fileName = contentDisposition
+        ? contentDisposition.split('filename=')[1].replace(/"/g, '') // Extract filename from headers if present
+        : 'customer_report.csv'; // Fallback filename
+
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl); // Clean up the URL object
+    } catch (error) {
+      // Improved error handling
+      console.error('Error during Axios request:', error);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('Request data:', error.request);
+      } else {
+        console.error('Error message:', error.message);
+      }
+    }
+  };
+  const postData1 = async () => {
+    const startDate = startDate2 ? formatDateForInput(new Date(startDate2)) : null;
+    const endDate = endDate2 ? formatDateForInput(new Date(endDate2)) : null;
+    const storeID = selectedStore3 ? selectedStore3.StoreID : null;
+
+    const url = `https://imly-b2y.onrender.com/api/reports/getCustomerReport?CreatedAt=${startDate}&endDate=${endDate}&storeId=${storeID}`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const blob = await response.blob(); // Get the response as a Blob
+      const urlBlob = window.URL.createObjectURL(blob); // Create a URL for the Blob
+
+      const a = document.createElement('a'); // Create a link element
+      a.href = urlBlob; // Set the link's href to the Blob URL
+      a.download = 'customer_report.csv'; // Set the desired file name
+      document.body.appendChild(a); // Append the link to the body
+      a.click(); // Programmatically click the link to trigger the download
+      a.remove(); // Remove the link from the document
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
+
+  // Call postData when needed, e.g., on form submission or button click.
+
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-80 w-auto p-6 bg-white shadow-lg rounded-lg mt-10 mx-10 mb-10">
+    <div className="px-4 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-80 w-auto p-6 mt-10 mx-10 mb-10">
       <h2 className="text-2xl font-bold mb-4">Report Generator</h2>
-
-      <div className="flex space-x-4 mb-6">
-        <button
-          onClick={() => setActiveTab('salesReport')}
-          className={`px-4 py-2 rounded-md ${activeTab === 'salesReport' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-        >
-          Sales Report
-        </button>
-        <button
-          onClick={() => setActiveTab('paymentReport')}
-          className={`px-4 py-2 rounded-md ${activeTab === 'paymentReport' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-        >
-          Payment Report
-        </button>
-        <button
-          onClick={() => setActiveTab('returnReport')}
-          className={`px-4 py-2 rounded-md ${activeTab === 'returnReport' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-        >
-          Return Report
-        </button>
-        <button
-          onClick={() => setActiveTab('customerFeedback')}
-          className={`px-4 py-2 rounded-md ${activeTab === 'customerFeedback' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-        >
-          Customer Feedback
-        </button>
+      <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
+        <ul class="flex flex-wrap -mb-px">
+          <li className="me-2">
+            <button
+              onClick={() => setActiveTab('salesReport')}
+              className={`inline-block p-4 border-b-2 rounded-t-lg ${activeTab === 'salesReport'
+                ? 'text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' // Active styles
+                : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300' // Inactive styles
+                }`}
+            >
+              <FaChartLine
+                className="inline-block mr-2"
+                color={activeTab === 'salesReport' ? '#2563EB' : '#6B7280'} // Active: Blue, Inactive: Gray
+              />
+              Sales Report
+            </button>
+          </li>
+          <li class="me-2">
+            <button onClick={() => setActiveTab('paymentReport')}
+              className={`inline-block p-4 border-b-2 rounded-t-lg ${activeTab === 'paymentReport'
+                ? 'text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' // Active styles
+                : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300' // Inactive styles
+                }`}><FaMoneyBillWave
+                className="inline-block mr-2"
+                color={activeTab === 'paymentReport' ? '#2563B5' : '#FFC107'} // Active: Blue, Inactive: Gray
+              />
+              Payment Report</button>
+          </li>
+          <li class="me-2">
+            <button onClick={() => setActiveTab('returnReport')}
+              className={`inline-block p-4 border-b-2 rounded-t-lg ${activeTab === 'returnReport'
+                ? 'text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' // Active styles
+                : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300' // Inactive styles
+                }`}><FaFileAlt
+                className="inline-block mr-2"
+                color={activeTab === 'returnReport' ? '#2563EB' : '#28A745'} // Active: Blue, Inactive: Gray
+              />
+              Customer Report</button>
+          </li>
+          <li class="me-2">
+            <button onClick={() => setActiveTab('customerFeedback')}
+              className={`inline-block p-4 border-b-2 rounded-t-lg ${activeTab === 'customerFeedback'
+                ? 'text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' // Active styles
+                : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300' // Inactive styles
+                }`}> <FaClipboardList
+                className="inline-block mr-2"
+                color={activeTab === 'customerFeedback' ? '#2563EB' : '#DC3545'} // Active: Blue, Inactive: Gray
+              />
+              Inventory Report</button>
+          </li>
+        </ul>
       </div>
-
       {activeTab === 'salesReport' && (
         <>
-          <div className="mb-8 ml-40">
-            <h3 className="text-xl font-semibold mb-4">Sales Report</h3>
+          <div className="mb-8 ml-10 mt-10 md:ml-20 lg:ml-40">
             <div className="grid grid-cols-1 gap-6">
               <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-                <div className='flex gap-40'>
-                  <label className="text-xs mt-2 font-medium text-gray-700">Start Date:</label>
-                  <input
-                    type="date"
-                    value={salesReport.dateRange.startDate}
-                    onChange={(e) => handleInputChange('salesReport', 'dateRange', { ...salesReport.dateRange, startDate: e.target.value })}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Date Range</label>
+                  <DateRangePicker
+                    placeholder="Select Date Range"
+                    onChange={handleDateRangeChange}
+                    border='none'
+                    className="p-1 w-full md:w-64 border-none rounded-md"
                   />
                 </div>
-                <div className='flex gap-40'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">End Date</label>
+
+                {/* Start Date */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Start Date</label>
                   <input
                     type="date"
-                    value={salesReport.dateRange.endDate}
-                    onChange={(e) => handleInputChange('salesReport', 'dateRange', { ...salesReport.dateRange, endDate: e.target.value })}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
+                    value={startDate ? formatDateForInput(startDate) : ''}
+                    onChange={(e) => setStartDate(new Date(e.target.value))}
+                    className="p-1 w-full md:w-64 border rounded-md" // Set consistent width
                   />
                 </div>
-                <div className='flex gap-28'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">Product Category</label>
-                  <select
-                    value={salesReport.productCategory}
-                    onChange={(e) => handleInputChange('salesReport', 'productCategory', e.target.value)}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
-                  >
-                    <option value="">Select Category</option>
-                    {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-                      <option key={i} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+
+                {/* End Date */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">End Date</label>
+                  <input
+                    type="date"
+                    value={endDate ? formatDateForInput(endDate) : ''}
+                    onChange={(e) => setEndDate(new Date(e.target.value))}
+                    className="p-1 w-full md:w-64 border rounded-md" // Set consistent width
+                  />
                 </div>
-                <div className='flex gap-44'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">Store</label>
-                  <select
-                    value={salesReport.store}
-                    onChange={(e) => handleInputChange('salesReport', 'store', e.target.value)}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
-                  >
-                    <option value="">Select Store</option>
-                    {['HSR layout Imly store', 'JP nagar Imly store ', 'Jayanagar Imly store '].map((option, i) => (
-                      <option key={i} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Store</label>
+                  <Combobox value={selectedStore} onChange={setSelectedStore}>
+                    <div className="relative w-full md:w-64">
+                      <Combobox.Input
+                        className="p-1 w-full border rounded-md border-gray-300"
+                        displayValue={(store) => store?.StoreName || "Select Store Name"}
+                        placeholder="Select Store Name"
+                      />
+                      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                        <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </Combobox.Button>
+                      <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+                        {/* Add "Select Store ID" option */}
+                        <Combobox.Option
+                          key="select-store-id"
+                          className={({ active }) =>
+                            `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
+                            }`
+                          }
+                          value={{ StoreID: null, StoreName: "Select Store ID" }}
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span className={selected ? "font-semibold" : "font-normal"}>
+                                Select Store ID
+                              </span>
+                              {selected && (
+                                <CheckIcon className="h-5 w-5 text-white absolute right-2" aria-hidden="true" />
+                              )}
+                            </>
+                          )}
+                        </Combobox.Option>
+
+                        {/* Render all store options */}
+                        {storeNames.map((store) => (
+                          <Combobox.Option
+                            key={store.StoreID}
+                            className={({ active }) =>
+                              `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
+                              }`
+                            }
+                            value={store}
+                          >
+                            {({ selected }) => (
+                              <>
+                                <span className={selected ? "font-semibold" : "font-normal"}>
+                                  {store.StoreName}
+                                </span>
+                                {selected && (
+                                  <CheckIcon className="h-5 w-5 text-white absolute right-2" aria-hidden="true" />
+                                )}
+                              </>
+                            )}
+                          </Combobox.Option>
+                        ))}
+                      </Combobox.Options>
+                    </div>
+                  </Combobox>
                 </div>
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Status</label>
+                  <Combobox value={selectedStatus} onChange={handleSelect}>
+                    <div className="relative w-full md:w-64"> {/* Consistent width */}
+                      <Combobox.Input
+                        className={`p-1 w-full border rounded-md ${errors.OrderStatus ? "border-red-500" : "border-gray-300"}`}
+                        onChange={(e) => setQuery(e.target.value)}
+                        displayValue={(statusID) =>
+                          orderStatusList.find((status) => status.StatusID === statusID)?.OrderStatus || ""
+                        }
+                      />
+                      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                        <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </Combobox.Button>
+                      <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+                        {filteredStatusList.length > 0 ? (
+                          filteredStatusList.map((status) => (
+                            <Combobox.Option
+                              key={status.StatusID}
+                              value={status.StatusID}
+                              className={({ active }) =>
+                                `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"}`
+                              }
+                            >
+                              {status.OrderStatus}
+                            </Combobox.Option>
+                          ))
+                        ) : (
+                          <div className="p-2 text-gray-500">No status found</div>
+                        )}
+                      </Combobox.Options>
+                    </div>
+                  </Combobox>
+                </div>
+
               </div>
             </div>
           </div>
-
-          <div className="flex space-x-4">
+          <div className="flex justify-center space-x-4">
             <button
               onClick={() => handleSubmit('salesReport')}
               className="bg-custom-blue text-white px-4 py-2 rounded-md"
             >
-              Generate Report
+              Download Report
             </button>
-            {generatedReport && generatedReport.reportType === 'salesReport' && (
-              <>
-                <button
-                  onClick={() => exportToExcel('salesReport', generatedReport.data)}
-                  className="bg-custom-blue text-white px-4 py-2 rounded-md"
-                >
-                  Export to Excel
-                </button>
-                <button
-                  onClick={() => exportToPDF('salesReport', generatedReport.data)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-md"
-                >
-                  Export to PDF
-                </button>
-              </>
-            )}
           </div>
-
-          {generatedReport && generatedReport.reportType === 'salesReport' && renderTable(generatedReport.data)}
         </>
       )}
 
       {activeTab === 'paymentReport' && (
         <>
-          <div className="mb-8 ml-40">
-            <h3 className="text-xl font-semibold mb-4">Payment Report</h3>
+          <div className="mb-8 ml-10 mt-10 md:ml-20 lg:ml-40">
             <div className="grid grid-cols-1 gap-6">
               <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-                <div className='flex gap-40'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">Start Date</label>
-                  <input
-                    type="date"
-                    value={paymentReport.dateRange.startDate}
-                    onChange={(e) => handleInputChange('paymentReport', 'dateRange', { ...paymentReport.dateRange, startDate: e.target.value })}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Date Range</label>
+                  <DateRangePicker
+                    placeholder="Select Date Range"
+                    onChange={handleDateRangeChange1}
+                    border='none'
+                    className="p-1 w-full md:w-64 border-none rounded-md"
                   />
                 </div>
-                <div className='flex gap-40'>
-                  <label className="block text-xs font-medium text-gray-700">End Date</label>
+
+                {/* Start Date */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Start Date</label>
                   <input
                     type="date"
-                    value={paymentReport.dateRange.endDate}
-                    onChange={(e) => handleInputChange('paymentReport', 'dateRange', { ...paymentReport.dateRange, endDate: e.target.value })}
-                    className="mt p-1 w-1/3 border rounded-md"
+                    value={startDate1 ? formatDateForInput(startDate1) : ''}
+                    onChange={(e) => setStartDate1(new Date(e.target.value))}
+                    className="p-1 w-full md:w-64 border rounded-md" // Set consistent width
                   />
                 </div>
-                <div className='flex gap-28'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">Product Category</label>
-                  <select
-                    value={paymentReport.productCategory}
-                    onChange={(e) => handleInputChange('paymentReport', 'productCategory', e.target.value)}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
-                  >
-                    <option value="">Select Category</option>
-                    {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-                      <option key={i} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+
+                {/* End Date */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">End Date</label>
+                  <input
+                    type="date"
+                    value={endDate1 ? formatDateForInput(endDate1) : ''}
+                    onChange={(e) => setEndDate1(new Date(e.target.value))}
+                    className="p-1 w-full md:w-64 border rounded-md" // Set consistent width
+                  />
                 </div>
-                <div className='flex gap-44'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">Store</label>
-                  <select
-                    value={paymentReport.store}
-                    onChange={(e) => handleInputChange('paymentReport', 'store', e.target.value)}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
-                  >
-                    <option value="">Select Store</option>
-                    {['HSR layout Imly store', 'JP nagar Imly store ', 'Jayanagar Imly store '].map((option, i) => (
-                      <option key={i} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Store</label>
+                  <Combobox value={selectedStore2} onChange={setSelectedStore2}>
+                    <div className="relative w-full md:w-64">
+                      <Combobox.Input
+                        className="p-1 w-full border rounded-md border-gray-300"
+                        displayValue={(store) => store?.StoreName || "Select Store Name"}
+                        placeholder="Select Store Name"
+                      />
+                      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                        <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </Combobox.Button>
+                      <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+                        {/* Add "Select Store ID" option */}
+                        <Combobox.Option
+                          key="select-store-id"
+                          className={({ active }) =>
+                            `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
+                            }`
+                          }
+                          value={{ StoreID: null, StoreName: "Select Store ID" }}
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span className={selected ? "font-semibold" : "font-normal"}>
+                                Select Store ID
+                              </span>
+                              {selected && (
+                                <CheckIcon className="h-5 w-5 text-white absolute right-2" aria-hidden="true" />
+                              )}
+                            </>
+                          )}
+                        </Combobox.Option>
+
+                        {/* Render all store options */}
+                        {storeNames.map((store) => (
+                          <Combobox.Option
+                            key={store.StoreID}
+                            className={({ active }) =>
+                              `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
+                              }`
+                            }
+                            value={store}
+                          >
+                            {({ selected }) => (
+                              <>
+                                <span className={selected ? "font-semibold" : "font-normal"}>
+                                  {store.StoreName}
+                                </span>
+                                {selected && (
+                                  <CheckIcon className="h-5 w-5 text-white absolute right-2" aria-hidden="true" />
+                                )}
+                              </>
+                            )}
+                          </Combobox.Option>
+                        ))}
+                      </Combobox.Options>
+                    </div>
+                  </Combobox>
+                </div>
+
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">
+                    Order Number
+                  </label>
+                  <div className="relative w-full md:w-64">
+                    {/* Search input */}
+                    <input
+                      type="text"
+                      placeholder="Search Order Number"
+                      className="p-1 w-full border rounded-md border-gray-300"
+                      value={searchTerm}
+                      onChange={handleInputChange1}
+                    />
+
+                    {/* Display filtered order numbers only if there are multiple matches */}
+                    {searchTerm && filteredOrders.length > 0 && (
+                      <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+                        {filteredOrders.map((orderNumber) => (
+                          <li
+                            key={orderNumber}
+                            onClick={() => handleInputChange2(orderNumber)}
+                            className="cursor-pointer select-none relative p-2 hover:bg-blue-500 hover:text-white"
+                          >
+                            {orderNumber}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div className="flex space-x-4">
+          <div className="flex justify-center">
             <button
-              onClick={() => handleSubmit('paymentReport')}
-              className="bg-custom-blue text-white px-4 py-2 rounded-md"
+              onClick={postData}
+              className="bg-custom-blue mt-5 text-white px-4 py-2 rounded-md"
             >
-              Generate Report
+              Download Report
             </button>
-            {generatedReport && generatedReport.reportType === 'paymentReport' && (
-              <>
-                <button
-                  onClick={() => exportToExcel('paymentReport', generatedReport.data)}
-                  className="bg-custom-blue text-white px-4 py-2 rounded-md"
-                >
-                  Export to Excel
-                </button>
-                <button
-                  onClick={() => exportToPDF('paymentReport', generatedReport.data)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-md"
-                >
-                  Export to PDF
-                </button>
-              </>
-            )}
           </div>
 
-          {generatedReport && generatedReport.reportType === 'paymentReport' && renderTable(generatedReport.data)}
         </>
       )}
 
       {activeTab === 'returnReport' && (
         <>
-          <div className="mb-8 ml-40">
-            <h3 className="text-xl font-semibold mb-4">Return Report</h3>
+          <div className="mb-8 ml-10 mt-10 md:ml-20 lg:ml-40">
             <div className="grid grid-cols-1 gap-6">
               <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-                <div className='flex gap-40'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">Start Date</label>
-                  <input
-                    type="date"
-                    value={returnReport.dateRange.startDate}
-                    onChange={(e) => handleInputChange('returnReport', 'dateRange', { ...returnReport.dateRange, startDate: e.target.value })}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Date Range</label>
+                  <DateRangePicker
+                    placeholder="Select Date Range"
+                    onChange={handleDateRangeChange2}
+                    border='none'
+                    className="p-1 w-full md:w-64 border-none rounded-md"
                   />
                 </div>
-                <div className='flex gap-40'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">End Date</label>
+
+                {/* Start Date */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Start Date</label>
                   <input
                     type="date"
-                    value={returnReport.dateRange.endDate}
-                    onChange={(e) => handleInputChange('returnReport', 'dateRange', { ...returnReport.dateRange, endDate: e.target.value })}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
+                    value={startDate2 ? formatDateForInput(startDate2) : ''}
+                    onChange={(e) => setStartDate2(new Date(e.target.value))}
+                    className="p-1 w-full md:w-64 border rounded-md" // Set consistent width
                   />
                 </div>
-                <div className='flex gap-28'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">Product Category</label>
-                  <select
-                    value={returnReport.productCategory}
-                    onChange={(e) => handleInputChange('returnReport', 'productCategory', e.target.value)}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
-                  >
-                    <option value="">Select Category</option>
-                    {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-                      <option key={i} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+
+                {/* End Date */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">End Date</label>
+                  <input
+                    type="date"
+                    value={endDate2 ? formatDateForInput(endDate2) : ''}
+                    onChange={(e) => setEndDate2(new Date(e.target.value))}
+                    className="p-1 w-full md:w-64 border rounded-md" // Set consistent width
+                  />
                 </div>
-                <div className='flex gap-44'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">Store</label>
-                  <select
-                    value={returnReport.store}
-                    onChange={(e) => handleInputChange('returnReport', 'store', e.target.value)}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
-                  >
-                    <option value="">Select Store</option>
-                    {['Store 1', 'Store 2', 'Store 3'].map((option, i) => (
-                      <option key={i} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+                {/* Store */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Store</label>
+                  <Combobox value={selectedStore3} onChange={setSelectedStore3}>
+                    <div className="relative w-full md:w-64">
+                      <Combobox.Input
+                        className="p-1 w-full border rounded-md border-gray-300"
+                        displayValue={(store) => store?.StoreName || "Select Store Name"}
+                        placeholder="Select Store Name"
+                      />
+                      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                        <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </Combobox.Button>
+                      <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+                        {/* Add "Select Store ID" option */}
+                        <Combobox.Option
+                          key="select-store-id"
+                          className={({ active }) =>
+                            `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
+                            }`
+                          }
+                          value={{ StoreID: null, StoreName: "Select Store ID" }}
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span className={selected ? "font-semibold" : "font-normal"}>
+                                Select Store ID
+                              </span>
+                              {selected && (
+                                <CheckIcon className="h-5 w-5 text-white absolute right-2" aria-hidden="true" />
+                              )}
+                            </>
+                          )}
+                        </Combobox.Option>
+
+                        {/* Render all store options */}
+                        {storeNames.map((store) => (
+                          <Combobox.Option
+                            key={store.StoreID}
+                            className={({ active }) =>
+                              `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
+                              }`
+                            }
+                            value={store}
+                          >
+                            {({ selected }) => (
+                              <>
+                                <span className={selected ? "font-semibold" : "font-normal"}>
+                                  {store.StoreName}
+                                </span>
+                                {selected && (
+                                  <CheckIcon className="h-5 w-5 text-white absolute right-2" aria-hidden="true" />
+                                )}
+                              </>
+                            )}
+                          </Combobox.Option>
+                        ))}
+                      </Combobox.Options>
+                    </div>
+                  </Combobox>
                 </div>
+                {/* Product Category */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Referred By</label>
+                  <Combobox value={paymentReport.productCategory} onChange={(value) => handleInputChange('paymentReport', 'productCategory', value)}>
+                    <div className="relative w-full md:w-64"> {/* Set consistent width */}
+                      <Combobox.Input
+                        className="p-1 w-full border rounded-md border-gray-300"
+                        displayValue={(category) => category || ""}
+                      />
+                      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                        <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </Combobox.Button>
+
+                      <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+                        {['Social Media', 'Walk-In', 'Reference'].map((option, index) => (
+                          <Combobox.Option
+                            key={index}
+                            value={option}
+                            className={({ active }) =>
+                              `cursor-pointer select-none relative p-2 ${active ? 'bg-blue-500 text-white' : 'text-gray-900'}`
+                            }
+                          >
+                            {option}
+                          </Combobox.Option>
+                        ))}
+                      </Combobox.Options>
+                    </div>
+                  </Combobox>
+                </div>
+
+                {selectedReferralType === 'Reference' && (
+                  <div className="mt-4">
+                    <label className="text-xs font-medium text-gray-700">Reference Sub-option</label>
+                    <Combobox value={selectedReferenceSubOption} onChange={handleReferenceSubOptionChange}>
+                      <div className="relative w-full md:w-64"> {/* Set consistent width */}
+                        <Combobox.Input
+                          className="p-1 w-full border rounded-md border-gray-300"
+                          displayValue={(option) => option || ""}
+                        />
+                        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                          <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </Combobox.Button>
+
+                        <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+                          {['Director', 'Employee', 'Existing'].map((option, index) => (
+                            <Combobox.Option
+                              key={index}
+                              value={option}
+                              className={({ active }) =>
+                                `cursor-pointer select-none relative p-2 ${active ? 'bg-blue-500 text-white' : 'text-gray-900'}`
+                              }
+                            >
+                              {option}
+                            </Combobox.Option>
+                          ))}
+                        </Combobox.Options>
+                      </div>
+                    </Combobox>
+                  </div>
+                )}
+
+
               </div>
             </div>
           </div>
 
-          <div className="flex space-x-4">
+          <div className="flex justify-center">
             <button
-              onClick={() => handleSubmit('returnReport')}
-              className="bg-custom-blue text-white px-4 py-2 rounded-md"
+              onClick={postData}
+              className="bg-custom-blue mt-5 text-white px-4 py-2 rounded-md"
             >
-              Generate Report
+              Download Report
             </button>
-            {generatedReport && generatedReport.reportType === 'returnReport' && (
-              <>
-                <button
-                  onClick={() => exportToExcel('returnReport', generatedReport.data)}
-                  className="bg-custom-blue text-white px-4 py-2 rounded-md"
-                >
-                  Export to Excel
-                </button>
-                <button
-                  onClick={() => exportToPDF('returnReport', generatedReport.data)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-md"
-                >
-                  Export to PDF
-                </button>
-              </>
-            )}
           </div>
 
-          {generatedReport && generatedReport.reportType === 'returnReport' && renderTable(generatedReport.data)}
+
         </>
       )}
 
       {activeTab === 'customerFeedback' && (
         <>
-          <div className="mb-8 ml-40">
-            <h3 className="text-xl font-semibold mb-4">Customer Feedback</h3>
+          <div className="mb-8 ml-10 mt-10 md:ml-20 lg:ml-40">
             <div className="grid grid-cols-1 gap-6">
               <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-                <div className='flex gap-40'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">Start Date</label>
-                  <input
-                    type="date"
-                    value={customerFeedback.dateRange.startDate}
-                    onChange={(e) => handleInputChange('customerFeedback', 'dateRange', { ...customerFeedback.dateRange, startDate: e.target.value })}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Date Range</label>
+                  <DateRangePicker
+                    placeholder="Select Date Range"
+                    onChange={handleDateRangeChange3}
+                    border='none'
+                    className="p-1 w-full md:w-64 border-none rounded-md"
                   />
                 </div>
-                <div className='flex gap-40'>
-                  <label className="mt-2 text-xs font-medium text-gray-700">End Date</label>
+
+                {/* Start Date */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Start Date</label>
                   <input
                     type="date"
-                    value={customerFeedback.dateRange.endDate}
-                    onChange={(e) => handleInputChange('customerFeedback', 'dateRange', { ...customerFeedback.dateRange, endDate: e.target.value })}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
+                    value={startDate3 ? formatDateForInput(startDate3) : ''}
+                    onChange={(e) => setStartDate3(new Date(e.target.value))}
+                    className="p-1 w-full md:w-64 border rounded-md" // Set consistent width
                   />
                 </div>
-                <div className='flex gap-28'>
-                  <label className="block text-xs font-medium text-gray-700">Product Category</label>
-                  <select
-                    value={customerFeedback.productCategory}
-                    onChange={(e) => handleInputChange('customerFeedback', 'productCategory', e.target.value)}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
-                  >
-                    <option value="">Select Category</option>
-                    {['Kitchen', 'Wardrobe', 'Both'].map((option, i) => (
-                      <option key={i} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+
+                {/* End Date */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">End Date</label>
+                  <input
+                    type="date"
+                    value={endDate3 ? formatDateForInput(endDate3) : ''}
+                    onChange={(e) => setEndDate3(new Date(e.target.value))}
+                    className="p-1 w-full md:w-64 border rounded-md" // Set consistent width
+                  />
                 </div>
-                <div className='flex gap-44'>
-                  <label className="block text-xs font-medium text-gray-700">Store</label>
-                  <select
-                    value={customerFeedback.store}
-                    onChange={(e) => handleInputChange('customerFeedback', 'store', e.target.value)}
-                    className="mt-1 p-1 w-1/3 border rounded-md"
-                  >
-                    <option value="">Select Store</option>
-                    {['HSR layout Imly store', 'JP nagar Imly store ', 'Jayanagar Imly store '].map((option, i) => (
-                      <option key={i} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+
+                {/* Store */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Store</label>
+                  <Combobox value={selectedStore4} onChange={setSelectedStore4}>
+                    <div className="relative w-full md:w-64">
+                      <Combobox.Input
+                        className="p-1 w-full border rounded-md border-gray-300"
+                        displayValue={(store) => store?.StoreName || "Select Store Name"}
+                        placeholder="Select Store Name"
+                      />
+                      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                        <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </Combobox.Button>
+                      <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+                        {/* Add "Select Store ID" option */}
+                        <Combobox.Option
+                          key="select-store-id"
+                          className={({ active }) =>
+                            `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
+                            }`
+                          }
+                          value={{ StoreID: null, StoreName: "Select Store ID" }}
+                        >
+                          {({ selected }) => (
+                            <>
+                              <span className={selected ? "font-semibold" : "font-normal"}>
+                                Select Store ID
+                              </span>
+                              {selected && (
+                                <CheckIcon className="h-5 w-5 text-white absolute right-2" aria-hidden="true" />
+                              )}
+                            </>
+                          )}
+                        </Combobox.Option>
+
+                        {/* Render all store options */}
+                        {storeNames.map((store) => (
+                          <Combobox.Option
+                            key={store.StoreID}
+                            className={({ active }) =>
+                              `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
+                              }`
+                            }
+                            value={store}
+                          >
+                            {({ selected }) => (
+                              <>
+                                <span className={selected ? "font-semibold" : "font-normal"}>
+                                  {store.StoreName}
+                                </span>
+                                {selected && (
+                                  <CheckIcon className="h-5 w-5 text-white absolute right-2" aria-hidden="true" />
+                                )}
+                              </>
+                            )}
+                          </Combobox.Option>
+                        ))}
+                      </Combobox.Options>
+                    </div>
+                  </Combobox>
+                </div>
+                {/* Product Category */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-10">
+                  <label className="text-xs font-medium text-gray-700 w-full md:w-40">Product Category</label>
+                  <Combobox value={paymentReport.productCategory} onChange={(value) => handleInputChange('paymentReport', 'productCategory', value)}>
+                    <div className="relative w-full md:w-64"> {/* Set consistent width */}
+                      <Combobox.Input
+                        className="p-1 w-full border rounded-md border-gray-300"
+                        displayValue={(category) => category || ""}
+                      />
+                      <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+                        <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </Combobox.Button>
+                      <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto bg-white border border-gray-300 rounded-md shadow-lg">
+                        {['Kitchen', 'Wardrobe', 'Both'].map((option) => (
+                          <Combobox.Option
+                            key={option}
+                            value={option}
+                            className={({ active }) => `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"}`}
+                          >
+                            {option}
+                          </Combobox.Option>
+                        ))}
+                      </Combobox.Options>
+                    </div>
+                  </Combobox>
                 </div>
               </div>
             </div>
           </div>
-
-          <div className="flex space-x-4">
+          <div className="flex flex justify-center space-x-4">
             <button
               onClick={() => handleSubmit('customerFeedback')}
               className="bg-custom-blue text-white px-4 py-2 rounded-md"
@@ -2953,7 +1076,6 @@ function ReportGenerator() {
             )}
           </div>
 
-          {generatedReport && generatedReport.reportType === 'customerFeedback' && renderTable(generatedReport.data)}
         </>
       )}
     </div>

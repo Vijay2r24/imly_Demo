@@ -559,18 +559,18 @@ function AddOrders() {
 
     setOrderDetails((prevDetails) => ({
       ...prevDetails,
-      CustomerID: selectedCustomer?.CustomerID || "", // Pass CustomerID
-      customerFirstName: selectedCustomer?.FirstName || "", // Pass FirstName
-      customerLastName: selectedCustomer?.LastName || "", // Pass LastName
-      customerEmail: selectedCustomer?.Email || "", // Pass Email
-      customerPhone: selectedCustomer?.PhoneNumber || "", // Pass Phone Number
-      AddressLine1: selectedCustomer?.AddressLine1 || "", // Pass AddressLine1
-      AddressLine2: selectedCustomer?.AddressLine2 || "", // Pass AddressLine2
-      CityID: selectedCustomer?.CityID || "", // Pass CityID
-      StateID: selectedCustomer?.StateID || "", // Pass StateID
-      CountryID: selectedCustomer?.CountryID || "", // Pass CountryID
-      ZipCode: selectedCustomer?.ZipCode || "", // Pass ZipCode
-      StoreID: selectedCustomer?.StoreID || ""
+      // CustomerID: selectedCustomer?.CustomerID || "", // Pass CustomerID
+      // customerFirstName: selectedCustomer?.FirstName || "", // Pass FirstName
+      // customerLastName: selectedCustomer?.LastName || "", // Pass LastName
+      // customerEmail: selectedCustomer?.Email || "", // Pass Email
+      // customerPhone: selectedCustomer?.PhoneNumber || "", // Pass Phone Number
+      // AddressLine1: selectedCustomer?.AddressLine1 || "", // Pass AddressLine1
+      // AddressLine2: selectedCustomer?.AddressLine2 || "", // Pass AddressLine2
+      // CityID: selectedCustomer?.CityID || "", // Pass CityID
+      // StateID: selectedCustomer?.StateID || "", // Pass StateID
+      // CountryID: selectedCustomer?.CountryID || "", // Pass CountryID
+      // ZipCode: selectedCustomer?.ZipCode || "", // Pass ZipCode
+      // StoreID: selectedCustomer?.StoreID || ""
     }));
 
     // Prepare raw JSON data for API
@@ -648,40 +648,40 @@ function AddOrders() {
     }
 
     // Reset form fields after submission
-    setOrderDetails({
-      TenantID: 1,
-      CustomerID: selectedCustomer?.CustomerID || "",
-      OrderDate: "",
-      TotalQuantity: 1,
-      AddressID: selectedAddress?.AddressID || "",
-      AddressLine1: "",
-      AddressLine2: "",
-      CityID: "",
-      StateID: "",
-      CountryID: "",
-      ZipCode: "",
-      TotalAmount: "",
-      OrderStatus: "",
-      customerFirstName: "",
-      customerLastName: "",
-      customerEmail: "",
-      customerPhone: "",
-      PaymentMethod: "",
-      PaymentStatus: "",
-      MaskedCardNumber: "",
-      DeliveryDate: "",
-      Comments: "",
-      ReferedBy: "",
-      PaymentComments: "",
-      assginto: "",
-      AdvanceAmount: "",
-      BalenceAmount: "",
-      ExpectedDurationDays: "",
-      DesginerName: "",
-      UploadImages: "",
-      choosefiles: "",
-      StoreID: selectedCustomer?.StateID || "",
-    });
+    // setOrderDetails({
+    //   TenantID: 1,
+    //   CustomerID: selectedCustomer?.CustomerID || "",
+    //   OrderDate: "",
+    //   TotalQuantity: 1,
+    //   AddressID: selectedAddress?.AddressID || "",
+    //   AddressLine1: "",
+    //   AddressLine2: "",
+    //   CityID: "",
+    //   StateID: "",
+    //   CountryID: "",
+    //   ZipCode: "",
+    //   TotalAmount: "",
+    //   OrderStatus: "",
+    //   customerFirstName: "",
+    //   customerLastName: "",
+    //   customerEmail: "",
+    //   customerPhone: "",
+    //   PaymentMethod: "",
+    //   PaymentStatus: "",
+    //   MaskedCardNumber: "",
+    //   DeliveryDate: "",
+    //   Comments: "",
+    //   ReferedBy: "",
+    //   PaymentComments: "",
+    //   assginto: "",
+    //   AdvanceAmount: "",
+    //   BalenceAmount: "",
+    //   ExpectedDurationDays: "",
+    //   DesginerName: "",
+    //   UploadImages: "",
+    //   choosefiles: "",
+    //   StoreID: selectedCustomer?.StateID || "",
+    // });
 
 
     // Reset images and form state
@@ -1216,7 +1216,7 @@ function AddOrders() {
 
   return (
     <>
-       <div className="main-container">
+        <div className="p-6 mr-10 mb-7 sm:px-6 lg:px-8 pt-4 ml-10 lg:ml-80 w-1/8 mt-8 ">
         <ToastContainer />
         <Box sx={{ width: "100%" }}>
           <Stepper activeStep={activeStep} className="mb-6" alternativeLabel>
@@ -1359,8 +1359,6 @@ function AddOrders() {
                             </>
                           )}
                         </div>
-
-
 
                         {isDialogOpen && selectedCustomer && (
                           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">

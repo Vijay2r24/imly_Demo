@@ -105,13 +105,15 @@ const YourComponent = ({ onBack, onNext }) => {
   }, []);
   const handleChanging = (e) => {
     const { value } = e.target;
+
     const selectedStatus = orderStatusList.find(
       (status) => status.StatusID === parseInt(value)
     );
+
+    // Update orderDetails with selected OrderStatus and StatusID
     setOrderDetails({
-      ...orderDetails,
       OrderStatus: selectedStatus ? selectedStatus.OrderStatus : "",
-      StatusID: value,
+      StatusID: value, // Store StatusID directly from selection
     });
   };
   const saveOrderHistory = () => {
@@ -548,7 +550,7 @@ const calculateDurationDays = (startDate, endDate) => {
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
             <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-              Delivery Date:
+              End Date:
             </label>
             <input
               type="date"

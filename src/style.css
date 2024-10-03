@@ -1,8 +1,157 @@
-/* styles.css */
-.main-container {
-  /* @apply px-4 sm:px-6 lg:px-8 pt-4 sm:ml-10 lg:ml-72 w-auto mt-6 bg-white p-6 rounded-lg shadow-md; */
-  @apply px-4 sm:px-6 lg:px-8 pt-4 sm:ml-10 lg:ml-72 w-auto mt-6 p-6 rounded-lg;
+.button-container {
+  display: flex;
+  gap: 0.5rem; /* Adds space between buttons */
+  flex-wrap: nowrap; /* Prevents buttons from wrapping */
 }
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem; 
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  height: 1.75rem;
+  width: auto;  /* Let the width adjust based on content */
+}
+
+/* Specific breakpoints for responsiveness */
+@media (max-width: 640px) { /* For mobile screens */
+  .button {
+    width: auto; /* Adjust width as needed */
+  }
+}
+
+@media (min-width: 641px) { /* For tablet and larger screens */
+  .button {
+    width: auto; /* Allow buttons to take up their natural width */
+  }
+}
+
+  .button:hover {
+    color: white;
+  }
+  
+  .button .icon {
+    width: 1rem;  /* Matches h-4 (height: 1rem) */
+    height: 1rem; /* Matches w-4 (width: 1rem) */
+  }
+  
+  .edit-button {
+    background-color: #d6eaf8;
+    color: #1c7ed6;
+  }
+  
+  .edit-button:hover {
+    background-color: #0c7dbd;
+  }
+  
+  .delete-button {
+    background-color: #ffe0f0;
+    color: #e03131;
+  }
+  
+  .delete-button:hover {
+    background-color: #c92a2a;
+  }
+  
+  /* Common button styles */
+.button-base {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.375rem; /* rounded-md */
+    border: 1px solid transparent;
+    padding: 0.5rem 1rem; /* py-2 px-4 (as per inline styles) */
+    font-size: 0.875rem; /* text-sm (as per inline styles) */
+    font-weight: 500; /* font-medium */
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .save-btn {
+    background-color: #003366; /* bg-custom-darkblue */
+    color: #ffffff; /* text-white */
+  }
+  
+  .save-btn:hover {
+    background-color: #004080; /* hover:bg-custom-lightblue */
+    color: #000000; /* hover:text-black */
+  }
+  
+  .save-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #4f46e5; focus:ring-indigo-500
+  }
+  
+  .cancel-btn {
+    background-color: #f56565; /* bg-red-500 */
+    color: #ffffff; /* text-white */
+  }
+  
+  .cancel-btn:hover {
+    background-color: #feb2b2; /* hover:bg-red-200 */
+    color: #000000; /* hover:text-black */
+  }
+  
+  .cancel-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #e53e3e; /* focus:ring-red-500 (if using different focus color) */
+  }
+
+  /* Common styles for both statuses */
+.status-pill {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px; /* This is the equivalent of rounded-full in Tailwind */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+}
+
+/* Styles for Active status */
+.status-active {
+  background-color: #d1fae5; /* bg-green-100 */
+  color: #065f46; /* text-green-800 */
+}
+
+/* Styles for Inactive status */
+.status-inactive {
+  background-color: #fce7f3; /* bg-pink-100 */
+  color: #831843; /* text-pink-800 */
+}
+
+/* Common styles for all gender pills */
+.gender-pill {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px; /* rounded-full */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+  width: 68px;
+  text-align: center;
+}
+
+/* Male gender pill */
+.gender-male {
+  background-color: #d1fae5; /* bg-green-100 */
+  color: #065f46; /* text-green-800 */
+}
+
+/* Female gender pill */
+.gender-female {
+  background-color: #fce7f3; /* bg-pink-100 */
+  color: #f87171; /* text-red-400 */
+}
+
+/* N/A or undefined gender pill */
+.gender-na {
+  background-color: #f3f4f6; /* bg-gray-100 */
+  color: #1f2937; /* text-gray-800 */
+}
+
+  
 
 .body-container {
   @apply flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center;
@@ -34,194 +183,10 @@
 }
 
 .action-button {
-  @apply w-full inline-flex items-center gap-x-1.5 rounded-md bg-custom-brown px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightbrown hover:text-gray-700 focus:outline-none;
+  @apply w-full inline-flex items-center gap-x-1.5 rounded-md bg-custom-darkblue px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-custom-lightblue hover:text-gray-700 focus:outline-none;
 }
 
 
 .icon {
   @apply h-4 w-4;
 }
-
-.flex-container {
-  @apply flex flex-wrap items-center justify-center w-full mt-4 gap-4;
-}
-
-.combobox-container {
-  @apply p-2 w-full sm:w-auto;
-}
-
-.combobox-wrapper {
-  @apply relative mt-1 w-full sm:w-64;
-}
-
-.combobox-input {
-  @apply w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm;
-}
-
-.combobox-button {
-  @apply absolute inset-y-0 right-0 flex items-center pr-2;
-}
-
-.combobox-icon {
-  @apply h-5 w-5 text-gray-400;
-}
-
-.combobox-options {
-  @apply absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm;
-}
-
-.combobox-option {
-  @apply relative cursor-default select-none py-2 pl-3 pr-9;
-}
-
-.combobox-option-active {
-  @apply relative cursor-default select-none py-2 pl-3 pr-9 bg-indigo-600 text-white;
-}
-
-.combobox-option-text {
-  @apply block truncate;
-}
-
-.combobox-option-selected-icon {
-  @apply absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600;
-}
-
-.active-selected-icon {
-  @apply text-white;
-}
-
-.combobox-check-icon {
-  @apply h-5 w-5;
-}
-
-.search-container-c-u {
-  @apply relative flex items-center p-2 w-full sm:w-auto;
-}
-
-.search-input {
-  @apply mt-1 p-2 pr-10 border border-gray-300 rounded-md w-full sm:w-64;
-}
-
-.search-icon-container-c-u {
-  @apply absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none;
-}
-
-
-
-/* Button container */
-.button-container {
-  @apply flex gap-2 flex-nowrap;
-}
-
-/* Button base */
-.button {
-  @apply inline-flex items-center gap-1 rounded-md py-1 px-2 text-xs font-semibold shadow-md h-7;
-}
-
-/* Mobile and tablet responsiveness */
-@media (max-width: 640px) {
-  .button {
-    @apply w-auto; /* Auto width for mobile */
-  }
-}
-@media (min-width: 641px) {
-  .button {
-    @apply w-auto; /* Auto width for tablet and larger screens */
-  }
-}
-
-/* Button hover effects */
-.button:hover {
-  @apply text-white;
-}
-
-/* Icon inside button */
-.button .icon {
-  @apply h-4 w-4;
-}
-
-/* Edit button */
-.edit-button {
-  @apply bg-blue-100 text-blue-600;
-}
-
-.edit-button:hover {
-  @apply bg-blue-600;
-}
-
-/* Delete button */
-.delete-button {
-  @apply bg-pink-100 text-red-600;
-}
-
-.delete-button:hover {
-  @apply bg-red-600;
-}
-
-/* Common button base for Save and Cancel */
-.button-base {
-  @apply inline-flex justify-center items-center rounded-md border border-transparent py-2 px-4 text-sm font-medium transition-all duration-200;
-}
-
-/* Save button */
-.save-btn {
-  @apply bg-custom-darkblue text-white;
-}
-
-.save-btn:hover {
-  @apply bg-custom-lightblue text-black;
-}
-
-.save-btn:focus {
-  @apply outline-none ring-2 ring-indigo-500;
-}
-
-/* Cancel button */
-.cancel-btn {
-  @apply bg-red-500 text-white;
-}
-
-.cancel-btn:hover {
-  @apply bg-red-600 text-black;
-}
-
-.cancel-btn:focus {
-  @apply outline-none ring-2 ring-red-500;
-}
-
-/* Status pills */
-.status-pill {
-  @apply inline-block py-2 px-3 text-xs font-semibold rounded-full shadow-md;
-}
-
-/* Active status */
-.status-active {
-  @apply bg-green-100 text-green-800;
-}
-
-/* Inactive status */
-.status-inactive {
-  @apply bg-pink-100 text-pink-800;
-}
-
-/* Gender pills */
-.gender-pill {
-  @apply inline-block py-2 px-3 text-xs font-semibold rounded-full shadow-md w-16 text-center;
-}
-
-/* Male gender pill */
-.gender-male {
-  @apply bg-green-100 text-green-800;
-}
-
-/* Female gender pill */
-.gender-female {
-  @apply bg-pink-100 text-red-400;
-}
-
-/* Undefined gender pill */
-.gender-na {
-  @apply bg-gray-100 text-gray-800;
-}
-
-  

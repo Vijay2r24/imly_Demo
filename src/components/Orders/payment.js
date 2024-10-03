@@ -47,17 +47,16 @@ const Payment = () => {
   const savePayment = () => {
     // Validation messages
     const validatePaymentData = () => {
-      if (!orderDetails.AdvanceAmount) return 'Advance amount is required.';
+      // if (!orderDetails.TotalAmount) return 'Amount is required.';
       if (!orderDetails.PaymentMethod) return 'Payment method is required.';
       if (!orderDetails.PaymentStatus) return 'Payment status is required.';
-      if (!orderDetails.MaskedCardNumber) return 'Masked card number is required.';
       if (!orderDetails.PaymentComments) return 'Payment comments are required.';
       return null; // No errors
     };
-  
+
     // Call validation function
     const validationError = validatePaymentData();
-  
+
     // If validation fails, show an error toast and exit the function
     if (validationError) {
       toast.error(validationError, {
@@ -71,22 +70,22 @@ const Payment = () => {
       });
       return; // Exit function if validation fails
     }
-  
+
     // Payment data object
     const paymentData = {
       TenantID: 1,
       PaymentID: 0,
       OrderID: generatedId,
       CustomerID: 33,
-      TotalAmount: orderDetails.AdvanceAmount,
-      AdvanceAmount: 500,
+      TotalAmount: orderDetails.TotalAmount,
+      AdvanceAmount: 0,
       BalanceAmount: 500, // Corrected typo
       PaymentComments: orderDetails.PaymentComments,
       PaymentMethod: orderDetails.PaymentMethod,
       PaymentStatus: orderDetails.PaymentStatus,
       MaskedCardNumber: orderDetails.MaskedCardNumber,
     };
-  
+
     // Proceed with the fetch request if validation passes
     fetch(CREATEORUPDATE_PAYMENT_API, {
       method: 'POST',
@@ -98,7 +97,7 @@ const Payment = () => {
       .then(response => response.json())
       .then(data => {
         console.log('API Response:', data); // Log the response
-  
+
         // Check if the response's StatusCode indicates success
         if (data.StatusCode === "SUCCESS") {
           toast.success('Payment created successfully!', {
@@ -110,10 +109,10 @@ const Payment = () => {
             draggable: true,
             progress: undefined,
           });
-  
+
           // Call fetchOrderDetails after a successful payment
           fetchOrderDetails(); // This will refresh the payment details
-  
+
           // Reset the orderDetails state here
           setOrderDetails({
             AdvanceAmount: '',
@@ -121,6 +120,7 @@ const Payment = () => {
             PaymentStatus: '',
             MaskedCardNumber: '',
             PaymentComments: '',
+            TotalAmount:'',
           });
         } else {
           // Handle error from the API response
@@ -137,7 +137,7 @@ const Payment = () => {
       })
       .catch(error => {
         // Handle network or other errors
-        toast.error('❌ ' + error.message, {
+        toast.error( error.message, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -197,7 +197,7 @@ const Payment = () => {
 
       const result = await response.json();
       console.log("API Response:", result); // Log the entire response
-      
+
       const payments = result.data || [];
       const paymentDetails = payments.map((payment) => ({
         PaymentID: payment.PaymentID || "",
@@ -229,6 +229,7 @@ const Payment = () => {
     console.log("Available PaymentIDs:", paymentDetails.map(payment => payment.PaymentID));
 
     const paymentData = paymentDetails.find(payment => payment.PaymentID === paymentId);
+    console.log(paymentData+"mmmmmmmmmmmmmm");
     if (paymentData) {
       setOrderDetails({
         PaymentID: paymentData.PaymentID || "",
@@ -293,6 +294,36 @@ const Payment = () => {
             </p>
           )}
         </div>
+        {(orderDetails.PaymentMethod === 'Card') && (
+          <div className="flex  justify-center flex-col sm:flex-row gap-2 sm:gap-0">
+            <label className="text-xs w-full sm:w-1/4 text-left font-medium text-gray-700">
+              Payments Card Number:
+            </label>
+            <input
+              type="text"
+              name="MaskedCardNumber"
+              value={
+                orderDetails.MaskedCardNumber
+                  ? orderDetails.MaskedCardNumber.replace(/\d(?=\d{4})/g, "*")
+                  : ""
+              }
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, ""); // Remove non-digit characters
+                if (value.length <= 16) {
+                  handleChange({
+                    target: { name: "MaskedCardNumber", value },
+                  });
+                }
+              }}
+              className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.MaskedCardNumber ? "border-red-500" : "border-gray-300"}`}
+            />
+            {errors.MaskedCardNumber && (
+              <p className="text-red-500 text-sm mt-1 sm:ml-4">
+                {errors.MaskedCardNumber}
+              </p>
+            )}
+          </div>
+        )}
         <div className="flex justify-center flex-col sm:flex-row gap-2 sm:gap-0">
           <label className="text-left w-full sm:w-1/4 text-xs font-medium text-gray-700">
             Payment Status:
@@ -333,35 +364,6 @@ const Payment = () => {
             </p>
           )}
         </div>
-        <div className="flex  justify-center flex-col sm:flex-row gap-2 sm:gap-0">
-          <label className="text-xs w-full sm:w-1/4 text-left font-medium text-gray-700">
-            Payments Card Number:
-          </label>
-          <input
-            type="text"
-            name="MaskedCardNumber"
-            value={
-              orderDetails.MaskedCardNumber
-                ? orderDetails.MaskedCardNumber.replace(/\d(?=\d{4})/g, "*")
-                : ""
-            }
-            onChange={(e) => {
-              const value = e.target.value.replace(/\D/g, ""); // Remove non-digit characters
-              if (value.length <= 16) {
-                handleChange({
-                  target: { name: "MaskedCardNumber", value },
-                });
-              }
-            }}
-            className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.MaskedCardNumber ? "border-red-500" : "border-gray-300"}`}
-          />
-          {errors.MaskedCardNumber && (
-            <p className="text-red-500 text-sm mt-1 sm:ml-4">
-              {errors.MaskedCardNumber}
-            </p>
-          )}
-        </div>
-
         <div className="flex   justify-center flex-col sm:flex-row gap-2 sm:gap-0">
           <label className="text-xs w-full sm:w-1/4 text-left font-medium text-gray-700">
             Payment Comments:
@@ -386,14 +388,14 @@ const Payment = () => {
           </label>
           <input
             type="number"
-            name="AdvanceAmount"
-            value={orderDetails.AdvanceAmount}
+            name="TotalAmount"
+            value={orderDetails.TotalAmount}
             onChange={handleChange}
-            className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.AdvanceAmount ? "border-red-500" : "border-gray-300"}`}
+            className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.TotalAmount ? "border-red-500" : "border-gray-300"}`}
           />
-          {errors.AdvanceAmount && (
+          {errors.TotalAmount && (
             <p className="text-red-500 text-sm mt-1 sm:ml-4">
-              {errors.AdvanceAmount}
+              {errors.TotalAmount}
             </p>
           )}
         </div>
@@ -433,11 +435,16 @@ const Payment = () => {
                 <TableHead className="bg-custom-darkblue text-white">
                   <TableRow>
                     <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Type</StyledTableCell>
-                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Status</StyledTableCell>
-                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Card Number</StyledTableCell>
+                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Date</StyledTableCell>
+
+                    {/* Conditionally render the Payment Card Number header */}
+                    {(paymentDetails.some(payment => payment.PaymentMethod === 'UPI' || payment.PaymentMethod === 'Card')) && (
+                      <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Card Number</StyledTableCell>
+                    )}
+
                     <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Payment Comments</StyledTableCell>
+                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Amount</StyledTableCell>
                     <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Edit</StyledTableCell>
-                    <StyledTableCell align="center" sx={{ borderRight: '1px solid #e5e7eb', color: 'white', fontWeight: 'bold' }}>Delete</StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -446,54 +453,51 @@ const Payment = () => {
                       {/* Payment Method */}
                       <StyledTableCell align="center" className="border-r">{payment.PaymentMethod}</StyledTableCell>
 
-                      {/* Payment Status with Badge */}
+                      {/* Payment Date */}
                       <StyledTableCell align="center" className="border-r border-gray-300">
-                        <StatusBadge status={payment.PaymentStatus} />
+                        {new Date(payment.PaymentDate).toLocaleString([], {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
                       </StyledTableCell>
 
-                      {/* Masked Card Number */}
-                      <StyledTableCell align="center" className="border-r border-gray-300">{payment.MaskedCardNumber}</StyledTableCell>
-
+                      {/* Conditionally render the Masked Card Number */}
+                      {(payment.PaymentMethod === 'UPI' || payment.PaymentMethod === 'Card'|| payment.PaymentMethod === 'Cash') && (
+                        <StyledTableCell align="center" className="border-r border-gray-300">
+                          {payment.MaskedCardNumber || 'N/A'}
+                        </StyledTableCell>
+                      )}
                       {/* Payment Comments */}
                       <StyledTableCell align="center" className="border-r">{payment.PaymentComments}</StyledTableCell>
 
-                      {/* Edit Button */}
+                      {/* Amount */}
                       <StyledTableCell align="center" className="border-r border-gray-300">
-                      <button
-                            type="button"
-                            onClick={() => handleEditPayment(payment.PaymentID)}
-                            className="button edit-button"
-                          >
-                            <AiOutlineEdit
-                              aria-hidden="true"
-                              className="h-4 w-4"
-                            />
-                            Edit
-                          </button>
+                        {payment.TotalAmount}
                       </StyledTableCell>
 
-                      {/* Delete Button */}
-                      <StyledTableCell align="center">
-                      <div className="button-container justify-center">
-                          <button
-                            type="button"
-                            // onClick={() => handleDelete(generatedId)}
-                            className="button delete-button"
-                          >
-                            <MdOutlineCancel
-                              aria-hidden="true"
-                              className="h-4 w-4"
-                            />
-                            Delete
-                          </button>
-                        </div>
-                        </StyledTableCell>
+                      {/* Edit Button */}
+                      <StyledTableCell align="center" className="border-r border-gray-300">
+                        <button
+                          type="button"
+                          onClick={() => handleEditPayment(payment.PaymentID)}
+                          className="button edit-button"
+                        >
+                          <AiOutlineEdit
+                            aria-hidden="true"
+                            className="h-4 w-4"
+                          />
+                          Edit
+                        </button>
+                      </StyledTableCell>
                     </TableRow>
                   ))}
                 </TableBody>
-
               </Table>
             </TableContainer>
+
 
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}

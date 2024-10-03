@@ -19,7 +19,7 @@ import { FiDownload } from "react-icons/fi";
 import StatusBadge from "./Statuses"; // Make sure you have this component
 import Step2 from "./payment";
 import { useNavigate } from "react-router-dom";
-import { CREATEORUPDATE_ORDER_HISTORY__API } from "../../Constants/apiRoutes";
+import { CREATEORUPDATE_ORDER_HISTORY__API, GET_ALL_HYSTORYID_API } from "../../Constants/apiRoutes";
 import LoadingAnimation from "../Loading/LoadingAnimation";
 import { IdContext } from "../../Context/IdContex";
 import { GETORDERBYID_API } from "../../Constants/apiRoutes";
@@ -39,21 +39,14 @@ const YourComponent = ({ onBack, onNext }) => {
   // Define state for orders, images, pdfPreview, errors, etc.
   const [formOrderDetails, setFormOrderDetails] = useState({
     OrderStatus: "",
-    assginto: "",
     ExpectedDurationDays: "",
     DeliveryDate: "",
-    Comments:"",
-    UploadDocument:"",
-  });
-  const [tableOrderDetails, setTableOrderDetails] = useState({
-    OrderStatus: "",
-    assginto: "",
-    ExpectedDurationDays: "",
-    DeliveryDate: "",
-    Comments:"",
-    UploadDocument:"",
+    Comments: "",
+    UploadDocument: "",
+    StartDate:"",
   });
   const [images, setImages] = useState([]);
+  const [editMode, setEditMode] = useState(false);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [pdfPreview, setPdfPreview] = useState(null);
   const [errors, setErrors] = useState({});
@@ -72,15 +65,6 @@ const YourComponent = ({ onBack, onNext }) => {
   }
   const { generatedId, customerId, orderDate } = useContext(IdContext);
   const [orderStatusList, setOrderStatusList] = useState([]);
-  const [orderDetails, setOrderDetails] = useState({
-    OrderStatus: "",
-    assginto: "",
-    ExpectedDurationDays: "",
-    DeliveryDate: "",
-    StatusID: "",
-    Comments:"",
-    UploadDocument:"",
-  });
   useEffect(() => {
     const fetchOrderStatuses = async () => {
       try {
@@ -111,29 +95,29 @@ const YourComponent = ({ onBack, onNext }) => {
     );
 
     // Update orderDetails with selected OrderStatus and StatusID
-    setOrderDetails({
+    setFormOrderDetails({
       OrderStatus: selectedStatus ? selectedStatus.OrderStatus : "",
       StatusID: value, // Store StatusID directly from selection
     });
   };
   const saveOrderHistory = () => {
     // Extract necessary data for validation
-    const { StatusID, OrderStatus } = orderDetails;
-    const { DeliveryDate,Comments } = formOrderDetails;
+    const { StatusID, OrderStatus } = formOrderDetails;
+    const { DeliveryDate, Comments } = formOrderDetails;
 
     // Validation checks
-    if (!StatusID) {
-      toast.error("Status is required.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      return;
-    }
+    // if (!StatusID) {
+    //   toast.error("Status is required.", {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //   });
+    //   return;
+    // }
 
     if (!DeliveryDate) {
       toast.error("Delivery date is required.", {
@@ -155,13 +139,13 @@ const YourComponent = ({ onBack, onNext }) => {
       OrderID: generatedId,
       StatusID: StatusID || "",
       StartDate: orderDate,
-      EndDate: DeliveryDate,
+      EndDate: formOrderDetails.DeliveryDate,
       AssignTo: "2",
-      Comments: Comments,
+      Comments: formOrderDetails.Comments,
       UserID: 2,
       CreatedBy: "sandy",
       OrderHistoryStatus: OrderStatus || "",
-      UploadDocument:formOrderDetails.UploadDocumentpl,
+      DocumentName: formOrderDetails.DocumentName,
     };
 
     fetch(CREATEORUPDATE_ORDER_HISTORY__API, {
@@ -187,8 +171,6 @@ const YourComponent = ({ onBack, onNext }) => {
             progress: undefined,
           });
 
-          // Call fetchOrderDetails to reload the updated data
-          fetchOrderDetails();
 
           closeModalAndMoveToNextStep(); // Close modal and move to next step
         } else {
@@ -236,69 +218,17 @@ const YourComponent = ({ onBack, onNext }) => {
       setShowModal(false); // Close the modal after a delay
     }, 8000); // Delay of 4 seconds
   };
-
-  // Fetch the order details based on the generatedId
-  const fetchOrderDetails = async () => {
-    try {
-      const response = await fetch(`${GETORDERBYID_API}/${generatedId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-
-      const data = await response.json();
-      setTableOrderDetails(data.order); // Update table with fetched order details
-    } catch (err) {
-      setError(err.message); // Handle fetch error
-    } finally {
-      setLoading(false); // Stop loading indicator
-    }
-  };
-  // UseEffect hook to refetch order details when `generatedId` changes
-  useEffect(() => {
-    fetchOrderDetails();
-  }, [generatedId]);
-   // Dependency on `generatedId`
-   const handleEdit = async () => {
-    try {
-      const response = await fetchOrderDetails(generatedId);
-  
-      // Log the response to ensure the data is received correctly
-      console.log("Fetched Data:", response);
-  
-  setFormOrderDetails((prevState) => ({
-    ...prevState,
-    OrderStatus: tableOrderDetails.statusID, // Set 'OrderStatus'
-    Comments: tableOrderDetails.Comments || "", // Set 'Comments'
-    ExpectedDurationDays: tableOrderDetails.ExpectedDurationDays||"",
-    DeliveryDate: tableOrderDetails.DeliveryDate 
-    ? new Date(tableOrderDetails.DeliveryDate).toLocaleDateString('en-CA') // For YYYY-MM-DD format
-    : "", // Set 'EndDate' to 'DeliveryDate'
-  }));
-  
-  // Debugging: Log to check if OrderStatus is received correctly
-  console.log("OrderStatus from response:", response.order.OrderStatus);
-    const selectedStatus = orderStatusList.find(
-      (status) => status.StatusID === response.order?.OrderStatus
-    );
-  
-  // Set the selected status for the dropdown
-  setSelectedStatus(response.order.OrderStatus || "");
-  }
-  
-    catch (error) {
-      console.error("Error fetching order details:", error);
-    }
-  };  
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormOrderDetails({ ...formOrderDetails, [name]: value });
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormOrderDetails((prev) => ({ ...prev, [name]: value }));
+    setFormOrderDetails((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
+  // };
   const handledate = (e) => {
     const { name, value } = e.target;
 
@@ -335,12 +265,19 @@ const YourComponent = ({ onBack, onNext }) => {
       return updatedDetails;
     });
   };
+  const formatDate = (isoDate) => {
+    if (!isoDate) return ""; // Return empty if no date is present
+    return new Date(isoDate).toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+  };
   const handleDateChanging = (e) => {
     const { value } = e.target;
     setFormOrderDetails((prevDetails) => ({
       ...prevDetails,
       DeliveryDate: value, // Manually update the DeliveryDate
     }));
+    const newDate = e.target.value;
+    const isoDate = new Date(newDate).toISOString(); // Convert back to ISO format
+    setFormOrderDetails({ ...formOrderDetails, DeliveryDate: isoDate });
   };
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -376,7 +313,7 @@ const YourComponent = ({ onBack, onNext }) => {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  
+
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -393,7 +330,7 @@ const YourComponent = ({ onBack, onNext }) => {
     navigate("/Orders"); // This assumes you're using `react-router-dom` for navigation
   };
   const [selectedStatus, setSelectedStatus] = useState(
-    orderDetails.StatusID || ""
+    formOrderDetails.StatusID || ""
   );
   const [query, setQuery] = useState("");
 
@@ -401,13 +338,13 @@ const YourComponent = ({ onBack, onNext }) => {
     query === ""
       ? orderStatusList
       : orderStatusList.filter((status) =>
-          status.OrderStatus.toLowerCase().includes(query.toLowerCase())
-        );
+        status.OrderStatus.toLowerCase().includes(query.toLowerCase())
+      );
 
-  const handleSelect = (statusID) => {
-    setSelectedStatus(statusID);
-    handleChanging({ target: { name: "OrderStatus", value: statusID } });
-  };
+      const handleSelect = (statusID) => {
+        console.log("Selected status ID:", statusID); // Log the selected status ID
+        setSelectedStatus(statusID); // Update the selected status
+      };
 
   // Helper function to calculate the duration between two dates
   const calculateDurationDays = (startDate, endDate) => {
@@ -416,7 +353,97 @@ const YourComponent = ({ onBack, onNext }) => {
     const duration = Math.ceil((end - start) / (1000 * 60 * 60 * 24)); // Difference in days
     return duration;
   };
+  const [statusDetails, setStatusDetails] = useState([]);
+  const fetchOrderDetails = async () => {
+    setLoading(true);
+    try {
+        const response = await fetch(`${GET_ALL_HYSTORYID_API}${generatedId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+
+        const result = await response.json();
+        console.log("API Response:", result); // Log the entire response
+
+        // Check if result contains the expected fields
+        const statuses = Array.isArray(result) ? result : [result];
+        statuses.forEach(item => {
+            console.log("OrderID:", item.OrderID, "EndDate:", item.EndDate);
+        });
+
+        // Map the result to statusDetails
+        const mappedStatusDetails = statuses.map((status) => ({
+            StatusID:status.StatusID || "N/A",
+            OrderID: status.OrderID || "N/A",
+            OrderStatus: status.OrderStatus || "N/A",
+            DeliveryDate: status.EndDate || "N/A",
+            Comments: status.Comment || "N/A",
+            OrderHistoryID: status.OrderHistoryID || "N/A",
+            StartDate:status.StartDate||"N/A",
+            ExpectedDurationDays: status.ExpectedDurationDays || "N/A",
+            DownloadDocuments: status.DownloadDocuments?.length > 0 ? status.DownloadDocuments : "No Documents",
+        }));
+
+        console.log("Mapped Status Details:", mappedStatusDetails); // Log mapped details
+        setStatusDetails(mappedStatusDetails);
+    } catch (err) {
+        setError(err.message);
+        console.error("Fetch Error:", err.message); // Log fetch error
+    } finally {
+        setLoading(false);
+    }
+};
+
+useEffect(() => {
+    fetchOrderDetails();
+}, [generatedId]);
+
+const handleEditstatus = (historyId, statusId) => {
+  console.log("Attempting to edit Payment with historyId:", historyId);
+  console.log("Available OrderHistoryIDs:", statusDetails.map(status => status.OrderHistoryID));
+
+  // Find the specific order status based on the selected historyId
+  const statusData = statusDetails.find((status) => status.OrderHistoryID === historyId);
+
+  if (statusData) {
+      // Set the form order details with the data found
+      setFormOrderDetails({
+          OrderID: statusData.OrderID || "",
+          OrderHistoryID: statusData.OrderHistoryID || "",
+          OrderStatus: statusData.OrderStatus || "N/A",
+          DeliveryDate: statusData.DeliveryDate || "",
+          Comments: statusData.Comments || "",
+          StartDate: statusData.StartDate || "",
+          DownloadDocuments: statusData.DownloadDocuments || [],
+          StatusID: statusId || "",
+      });
+
+      // Find the status from orderStatusList where the status matches and set the StatusID
+      const statusToSelect = orderStatusList.find(status => status.OrderStatus === statusData.OrderStatus);
+      if (statusToSelect) {
+          setSelectedStatus(statusToSelect.StatusID); // Set the selected status ID
+      }
+
+      // Log the updated form details
+      console.log("Form Details after setting:", formOrderDetails.OrderStatus);
+
+      // Enable edit mode
+      setEditMode(true);
+  } else {
+      console.error("No valid data found for the provided historyId:", historyId);
+  }
+};
+
+// Log updated formOrderDetails
+useEffect(() => {
+    console.log("FormOrderDetails updated:", formOrderDetails);
+}, [formOrderDetails]);
   return (
     <Box
       sx={{
@@ -438,9 +465,8 @@ const YourComponent = ({ onBack, onNext }) => {
             <Combobox value={selectedStatus} onChange={handleSelect}>
               <div className="relative w-full sm:w-1/4">
                 <Combobox.Input
-                  className={`p-1 w-full border rounded-md ${
-                    errors.OrderStatus ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`p-1 w-full border rounded-md ${errors.OrderStatus ? "border-red-500" : "border-gray-300"
+                    }`}
                   onChange={(e) => setQuery(e.target.value)}
                   displayValue={(statusID) =>
                     orderStatusList.find(
@@ -461,8 +487,7 @@ const YourComponent = ({ onBack, onNext }) => {
                         key={status.StatusID}
                         value={status.StatusID}
                         className={({ active }) =>
-                          `cursor-pointer select-none relative p-2 ${
-                            active ? "bg-blue-500 text-white" : "text-gray-900"
+                          `cursor-pointer select-none relative p-2 ${active ? "bg-blue-500 text-white" : "text-gray-900"
                           }`
                         }
                       >
@@ -489,10 +514,10 @@ const YourComponent = ({ onBack, onNext }) => {
               type="text"
               name="Comments"
               value={formOrderDetails.Comments}
-              onChange={handleChange}
-              className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                errors.Comments ? "border-red-500" : "border-gray-300"
-              }`}
+              onChange={(e) =>
+                setFormOrderDetails({ ...formOrderDetails, Comments: e.target.value })}
+              className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.Comments ? "border-red-500" : "border-gray-300"
+                }`}
             />
             {errors.Comments && (
               <p className="text-red-500 text-sm ml-2">{errors.Comments}</p>
@@ -501,33 +526,31 @@ const YourComponent = ({ onBack, onNext }) => {
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
             <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-              Expected Duration (In Days):
+            StartDate
             </label>
             <input
-              type="number"
-              name="ExpectedDurationDays"
-              value={formOrderDetails.ExpectedDurationDays}
-              onChange={handledate}
-              className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                errors.ExpectedDurationDays
-                  ? "border-red-500"
-                  : "border-gray-300"
-              }`}
+              type="date"
+              name="StartDate"
+              value={formatDate(formOrderDetails.StartDate)}
+              onChange={handleChange}
+              className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.StartDate
+                ? "border-red-500"
+                : "border-gray-300"
+                }`}
             />
           </div>
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
             <label className="sm:w-1/4 w-full text-left text-xs font-medium text-gray-700">
-              Delivery Date:
+              End Date:
             </label>
             <input
               type="date"
               name="DeliveryDate"
-              value={formOrderDetails.DeliveryDate}
+              value={formatDate(formOrderDetails.DeliveryDate)}
               onChange={handleDateChanging}
-              className={`p-1 w-full sm:w-1/4 border rounded-md ${
-                errors.DeliveryDate ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`p-1 w-full sm:w-1/4 border rounded-md ${errors.DeliveryDate ? "border-red-500" : "border-gray-300"
+                }`}
             />
             {errors.DeliveryDate && (
               <p className="text-red-500 text-sm ml-2">{errors.DeliveryDate}</p>
@@ -541,7 +564,7 @@ const YourComponent = ({ onBack, onNext }) => {
             <input
               type="file"
               multiple
-              value={formOrderDetails.UploadDocument}
+              value={formOrderDetails.DocumentName}
               accept="image/*,application/pdf,.doc,.docx"
               onChange={handleImageChange}
               className="hidden"
@@ -652,7 +675,7 @@ const YourComponent = ({ onBack, onNext }) => {
                         fontWeight: "bold",
                       }}
                     >
-                      Delivery Date
+                      End Date
                     </StyledTableCell>
                     <StyledTableCell
                       align="center"
@@ -693,114 +716,102 @@ const YourComponent = ({ onBack, onNext }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {!loading && orders ? (
-                    <TableRow className="hover:bg-gray-100">
-                      {/* Order Status */}
-                      <StyledTableCell
-                        align="center"
-                        className="border-r border-gray-300"
-                      >
-                        <StatusBadge status={tableOrderDetails.OrderStatus} />
-                      </StyledTableCell>
+                  {statusDetails.length > 0 ? (
+                    statusDetails.map((status, index) => (
+                      <TableRow key={index} className="hover:bg-gray-100">
+                        {/* Order Status */}
+                        <StyledTableCell
+                          align="center"
+                          className="border-r border-gray-300"
+                        >
+                          <StatusBadge status={status.OrderStatus} />
+                        </StyledTableCell>
 
-                      {/* Delivery Date */}
-                      <StyledTableCell
-                        align="center"
-                        className="border-r border-gray-300"
-                      >
-                        {tableOrderDetails.DeliveryDate
-                          ? new Date(
-                              tableOrderDetails.DeliveryDate
-                            ).toLocaleDateString()
-                          : "N/A"}
-                      </StyledTableCell>
+                        {/* Delivery Date */}
+                        <StyledTableCell
+                          align="center"
+                          className="border-r border-gray-300"
+                        >
+                          {status.DeliveryDate
+                            ? new Date(status.DeliveryDate).toLocaleDateString()
+                            : "N/A"}
+                        </StyledTableCell>
 
-                      {/* Comments */}
-                      <StyledTableCell
-                        align="center"
-                        className="border-r border-gray-300"
-                      >
-                        {tableOrderDetails.Comments || "N/A"}
-                      </StyledTableCell>
+                        {/* Comments */}
+                        <StyledTableCell
+                          align="center"
+                          className="border-r border-gray-300"
+                        >
+                          {status.Comments || "N/A"}
+                        </StyledTableCell>
 
-                      {/* Document Links */}
-                      <StyledTableCell
-                        align="center"
-                        className="border-r border-gray-300"
-                      >
-                        {tableOrderDetails.UploadDocument ? (
-                          <>
-                            <IconButton
-                              href={tableOrderDetails.UploadDocument}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              color="primary"
+                        {/* Document Links */}
+                        <StyledTableCell
+                          align="center"
+                          className="border-r border-gray-300"
+                        >
+                          {status.UploadDocument ? (
+                            <>
+                              <IconButton
+                                href={status.UploadDocument}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                color="primary"
+                              >
+                                <AiOutlineEye size={20} />
+                                <span className="ml-2 font-bold text-sm">View</span>
+                              </IconButton>
+                              <IconButton
+                                href={status.UploadDocument}
+                                download
+                                color="success"
+                              >
+                                <FiDownload size={20} />
+                                <span className="font-bold text-sm">Download</span>
+                              </IconButton>
+                            </>
+                          ) : (
+                            "No Documents"
+                          )}
+                        </StyledTableCell>
+
+                        {/* Edit Button */}
+                        <StyledTableCell align="center" className="border-r border-gray-300">
+                          <div className="button-container justify-center">
+                            <button
+                              type="button"
+                              onClick={() => handleEditstatus(status.OrderHistoryID)}
+                              className="button edit-button"
                             >
-                              <AiOutlineEye size={20} />
-                              <span className="ml-2 font-bold text-sm">
-                                View
-                              </span>
-                            </IconButton>
-                            <IconButton
-                              href={tableOrderDetails.UploadDocument}
-                              download
-                              color="success"
-                            >
-                              <FiDownload size={20} />
-                              <span className="font-bold text-sm">
-                                Download
-                              </span>
-                            </IconButton>
-                          </>
-                        ) : (
-                          "No Documents"
-                        )}
-                      </StyledTableCell>
-
-                      <StyledTableCell  align="center"
-                        className="border-r border-gray-300"                    
-                      >
-                        <div className="button-container justify-center">
-                          <button
-                            type="button"
-                             onClick={() => handleEdit(generatedId)}
-                            className="button edit-button"
-                          >
-                            <AiOutlineEdit
-                              aria-hidden="true"
-                              className="h-4 w-4"
-                            />
-                            Edit
-                          </button>
+                              <AiOutlineEdit aria-hidden="true" className="h-4 w-4" />
+                              Edit
+                            </button>
                           </div>
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <div className="button-container justify-center">
-                          <button
-                            type="button"
-                            // onClick={() => handleDelete(generatedId)}
-                            className="button delete-button"
-                          >
-                            <MdOutlineCancel
-                              aria-hidden="true"
-                              className="h-4 w-4"
-                            />
-                            Delete
-                          </button>
-                        </div>
-                      </StyledTableCell>
-                    </TableRow>
+                        </StyledTableCell>
+
+                        {/* Delete Button */}
+                        <StyledTableCell align="center">
+                          <div className="button-container justify-center">
+                            <button
+                              type="button"
+                              // onClick={() => handleDelete(generatedId)}
+                              className="button delete-button"
+                            >
+                              <MdOutlineCancel aria-hidden="true" className="h-4 w-4" />
+                              Delete
+                            </button>
+                          </div>
+                        </StyledTableCell>
+                      </TableRow>
+                    ))
                   ) : (
                     <TableRow>
                       <StyledTableCell align="center" colSpan={6}>
-                        {loading
-                          ? "Loading..."
-                          : error
-                          ? error
-                          : "No Order Found"}
+                        {loading ? "Loading..." : error ? error : "No Order Found"}
                       </StyledTableCell>
                     </TableRow>
                   )}
+
                 </TableBody>
               </Table>
             </TableContainer>
